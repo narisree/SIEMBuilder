@@ -2,10 +2,18 @@
 LLM Chain for CIM Mapping
 Uses the configured AI provider to map log fields to Splunk CIM data models.
 Implements strict anti-hallucination rules and proper field flag handling.
+
+Enhanced with AI-based field parsing and vendor documentation support for
+improved semantic understanding and mapping accuracy.
 """
 import re
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, TYPE_CHECKING
 from dataclasses import dataclass
+
+# Type hints for optional dependencies
+if TYPE_CHECKING:
+    from .ai_field_parser import AIFieldParseResult
+    from .vendor_doc_loader import VendorDocResult
 
 
 # System prompt based on the CIM Mapping System Prompt specification
@@ -194,42 +202,87 @@ class CIMMappingResult:
 
 
 class CIMMappingChain:
-    """Chain for analyzing logs and generating CIM mappings using AI."""
-    
+    """Chain for analyzing logs and generating CIM mappings using AI.
+
+    Enhanced with support for:
+    - AI-based semantic field parsing
+    - Vendor documentation context
+    - Improved field mapping accuracy
+    """
+
     def __init__(self, vector_store, ai_client):
         """Initialize with vector store and AI client."""
         self.vector_store = vector_store
         self.ai_client = ai_client
-    
-    def analyze(self, parsed_log) -> Dict[str, Any]:
-        """Analyze parsed log and generate CIM mapping."""
-        # Prepare field information - field NAMES with sample VALUES
-        field_info = self._prepare_field_info(parsed_log)
-        
+        self._ai_field_result = None
+        self._vendor_doc_result = None
+
+    def analyze(
+        self,
+        parsed_log,
+        ai_field_result: Optional['AIFieldParseResult'] = None,
+        vendor_doc_content: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Analyze parsed log and generate CIM mapping.
+
+        Args:
+            parsed_log: ParsedLog object from LogParser
+            ai_field_result: Optional AIFieldParseResult with enriched field info
+            vendor_doc_content: Optional vendor documentation context string
+
+        Returns:
+            Dict with mapping results
+        """
+        # Store for use in helper methods
+        self._ai_field_result = ai_field_result
+        self._vendor_doc_content = vendor_doc_content
+
+        # Prepare field information - enhanced with AI parsing if available
+        if ai_field_result and ai_field_result.success:
+            field_info = self._prepare_enhanced_field_info(parsed_log, ai_field_result)
+        else:
+            field_info = self._prepare_field_info(parsed_log)
+
         # Get relevant CIM context from vector store
         cim_context = self._get_cim_context(list(parsed_log.fields.keys()))
-        
-        # Build the user prompt
-        user_prompt = self._build_user_prompt(parsed_log, field_info, cim_context)
-        
+
+        # Build the user prompt with all available context
+        user_prompt = self._build_user_prompt(
+            parsed_log,
+            field_info,
+            cim_context,
+            ai_field_result,
+            vendor_doc_content
+        )
+
         # Call AI provider
         try:
             response = self._call_ai(user_prompt)
-            
+
             if response.get('success'):
                 mapping_text = response.get('response', '')
-                
+
                 # Extract data model and dataset
                 data_model = self._extract_data_model(mapping_text)
                 dataset = self._extract_dataset(mapping_text)
                 confidence = self._extract_confidence(mapping_text)
-                
+
+                # Boost confidence if we had AI field analysis
+                if ai_field_result and ai_field_result.success:
+                    confidence = min(confidence + 0.05, 0.98)
+
+                # Boost confidence if we had vendor docs
+                if vendor_doc_content:
+                    confidence = min(confidence + 0.05, 0.98)
+
                 return {
                     'success': True,
                     'data_model': data_model,
                     'dataset': dataset,
                     'confidence': confidence,
-                    'mapping': mapping_text
+                    'mapping': mapping_text,
+                    'ai_field_analysis_used': ai_field_result is not None and ai_field_result.success,
+                    'vendor_docs_used': vendor_doc_content is not None
                 }
             else:
                 return {
@@ -249,6 +302,60 @@ class CIMMappingChain:
                 'confidence': 0.0,
                 'mapping': ''
             }
+
+    def _prepare_enhanced_field_info(
+        self,
+        parsed_log,
+        ai_result: 'AIFieldParseResult'
+    ) -> str:
+        """Prepare field information enhanced with AI semantic analysis."""
+        lines = []
+        lines.append("## Detected Fields (AI-Enhanced Analysis)")
+        lines.append("")
+
+        # Add overall analysis if available
+        if ai_result.log_category:
+            lines.append(f"**Log Category:** {ai_result.log_category}")
+        if ai_result.vendor_detected:
+            lines.append(f"**Vendor:** {ai_result.vendor_detected}")
+        if ai_result.product_detected:
+            lines.append(f"**Product:** {ai_result.product_detected}")
+        lines.append("")
+
+        lines.append("| # | Field Name | Semantic Category | Sample Values | AI Suggested CIM | Mapping Type |")
+        lines.append("|---|------------|-------------------|---------------|------------------|--------------|")
+
+        for i, (field_name, values) in enumerate(parsed_log.fields.items(), 1):
+            # Get AI enrichment if available
+            enriched = ai_result.enriched_fields.get(field_name)
+
+            # Get unique sample values (limit to 3)
+            unique_values = list(set(str(v) for v in values if v))[:3]
+            sample_str = ", ".join(unique_values) if unique_values else "(empty)"
+
+            # Truncate if too long
+            if len(sample_str) > 40:
+                sample_str = sample_str[:37] + "..."
+
+            if enriched:
+                category = enriched.semantic_category or "unknown"
+                suggested_cim = enriched.suggested_cim_field or "-"
+                mapping_type = enriched.mapping_type or "-"
+
+                # Add review flag if needed
+                if enriched.needs_review:
+                    category += " (!)"
+            else:
+                category = self._infer_field_type(values)
+                suggested_cim = "-"
+                mapping_type = "-"
+
+            lines.append(f"| {i} | `{field_name}` | {category} | {sample_str} | {suggested_cim} | {mapping_type} |")
+
+        lines.append("")
+        lines.append("*Note: Fields marked with (!) may need manual review*")
+
+        return "\n".join(lines)
     
     def _prepare_field_info(self, parsed_log) -> str:
         """Prepare field information showing NAMES and sample values."""
@@ -345,25 +452,89 @@ class CIMMappingChain:
         
         return "\n".join(lines)
     
-    def _build_user_prompt(self, parsed_log, field_info: str, cim_context: str) -> str:
-        """Build the user prompt for CIM mapping."""
+    def _build_user_prompt(
+        self,
+        parsed_log,
+        field_info: str,
+        cim_context: str,
+        ai_field_result: Optional['AIFieldParseResult'] = None,
+        vendor_doc_content: Optional[str] = None
+    ) -> str:
+        """Build the user prompt for CIM mapping.
+
+        Args:
+            parsed_log: ParsedLog object
+            field_info: Formatted field information string
+            cim_context: CIM context from vector store
+            ai_field_result: Optional AI field analysis results
+            vendor_doc_content: Optional vendor documentation context
+
+        Returns:
+            Complete user prompt for CIM mapping
+        """
         prompt_parts = [
             f"# Log Source Analysis Request",
             f"",
             f"## Log Format: {parsed_log.format.value.upper()}",
             f"## Total Fields Detected: {len(parsed_log.fields)}",
         ]
-        
-        if parsed_log.vendor:
-            prompt_parts.append(f"## Vendor: {parsed_log.vendor}")
-        if parsed_log.product:
-            prompt_parts.append(f"## Product: {parsed_log.product}")
-        
+
+        # Add vendor/product info from parsed log or AI analysis
+        vendor = parsed_log.vendor
+        product = parsed_log.product
+
+        if ai_field_result and ai_field_result.success:
+            if ai_field_result.vendor_detected:
+                vendor = ai_field_result.vendor_detected
+            if ai_field_result.product_detected:
+                product = ai_field_result.product_detected
+
+        if vendor:
+            prompt_parts.append(f"## Vendor: {vendor}")
+        if product:
+            prompt_parts.append(f"## Product: {product}")
+
+        # Add log category if detected by AI
+        if ai_field_result and ai_field_result.log_category:
+            prompt_parts.append(f"## Detected Log Category: {ai_field_result.log_category}")
+
         prompt_parts.append("")
         prompt_parts.append(field_info)
         prompt_parts.append("")
         prompt_parts.append("---")
         prompt_parts.append("")
+
+        # Add vendor documentation context if available
+        if vendor_doc_content:
+            prompt_parts.append("## Vendor Documentation Reference")
+            prompt_parts.append("")
+            # Truncate vendor docs if too long
+            if len(vendor_doc_content) > 4000:
+                prompt_parts.append(vendor_doc_content[:4000])
+                prompt_parts.append("")
+                prompt_parts.append("*[Vendor documentation truncated]*")
+            else:
+                prompt_parts.append(vendor_doc_content)
+            prompt_parts.append("")
+            prompt_parts.append("---")
+            prompt_parts.append("")
+
+        # Add AI analysis summary if available
+        if ai_field_result and ai_field_result.success and ai_field_result.overall_analysis:
+            prompt_parts.append("## AI Field Semantic Analysis Summary")
+            prompt_parts.append("")
+            # Add a condensed version of the AI analysis
+            analysis_summary = ai_field_result.overall_analysis[:2000]
+            if len(ai_field_result.overall_analysis) > 2000:
+                # Try to end at a sentence
+                last_period = analysis_summary.rfind('.')
+                if last_period > 1500:
+                    analysis_summary = analysis_summary[:last_period + 1]
+            prompt_parts.append(analysis_summary)
+            prompt_parts.append("")
+            prompt_parts.append("---")
+            prompt_parts.append("")
+
         prompt_parts.append(cim_context)
         prompt_parts.append("")
         prompt_parts.append("---")
@@ -385,9 +556,21 @@ class CIMMappingChain:
         prompt_parts.append("4. Field aliases (for flag: extracted)")
         prompt_parts.append("5. Required tags for CIM compliance")
         prompt_parts.append("")
+
+        # Enhanced instructions when AI analysis is available
+        if ai_field_result and ai_field_result.success:
+            prompt_parts.append("**CONTEXT:** AI semantic analysis has been performed on these fields.")
+            prompt_parts.append("Use the suggested CIM fields and mapping types as guidance, but verify against CIM specifications.")
+            prompt_parts.append("")
+
+        if vendor_doc_content:
+            prompt_parts.append("**CONTEXT:** Vendor documentation has been provided.")
+            prompt_parts.append("Use field definitions from the documentation for accurate value interpretation.")
+            prompt_parts.append("")
+
         prompt_parts.append("**IMPORTANT:** Map the FIELD NAMES shown in the table above, NOT the sample values.")
         prompt_parts.append("**IMPORTANT:** Check field flags - use Calculated Fields for 'calculated' flags, Field Aliases for 'extracted' flags.")
-        
+
         return "\n".join(prompt_parts)
     
     def _call_ai(self, user_prompt: str) -> Dict[str, Any]:
