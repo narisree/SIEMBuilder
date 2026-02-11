@@ -1,0 +1,302 @@
+vendor,product,log_type,field_position,field_name,field_description,data_type,cim_mapping,sample_value,delimiter,is_header_row
+Palo Alto,Firewall,Traffic,0,receive_time,Time the log was received at the management plane,timestamp,_time,15-01-2024 10:30,",",FALSE
+Palo Alto,Firewall,Traffic,1,serial_number,Serial number of the device,string,dvc,1234567890,",",FALSE
+Palo Alto,Firewall,Traffic,2,type,Type of log,string,,TRAFFIC,",",FALSE
+Palo Alto,Firewall,Traffic,3,subtype,Subtype of log,string,action,start,",",FALSE
+Palo Alto,Firewall,Traffic,4,config_version,Config version,string,,10.2,",",FALSE
+Palo Alto,Firewall,Traffic,5,generated_time,Time the log was generated,timestamp,,15-01-2024 10:30,",",FALSE
+Palo Alto,Firewall,Traffic,6,src_ip,Source IP address,ip,src_ip,192.168.1.100,",",FALSE
+Palo Alto,Firewall,Traffic,7,dst_ip,Destination IP address,ip,dest_ip,10.0.0.50,",",FALSE
+Palo Alto,Firewall,Traffic,8,nat_src_ip,NAT source IP,ip,src_translated_ip,203.0.113.10,",",FALSE
+Palo Alto,Firewall,Traffic,9,nat_dst_ip,NAT destination IP,ip,dest_translated_ip,10.0.0.50,",",FALSE
+Palo Alto,Firewall,Traffic,10,rule_name,Security rule name,string,rule,Allow-Web,",",FALSE
+Palo Alto,Firewall,Traffic,11,src_user,Source user,string,src_user,domain\jsmith,",",FALSE
+Palo Alto,Firewall,Traffic,12,dst_user,Destination user,string,dest_user,,",",FALSE
+Palo Alto,Firewall,Traffic,13,application,Application name,string,app,web-browsing,",",FALSE
+Palo Alto,Firewall,Traffic,14,vsys,Virtual system,string,vsys,vsys1,",",FALSE
+Palo Alto,Firewall,Traffic,15,src_zone,Source zone,string,src_zone,Trust,",",FALSE
+Palo Alto,Firewall,Traffic,16,dst_zone,Destination zone,string,dest_zone,Untrust,",",FALSE
+Palo Alto,Firewall,Traffic,17,ingress_if,Ingress interface,string,src_interface,ethernet1/1,",",FALSE
+Palo Alto,Firewall,Traffic,18,egress_if,Egress interface,string,dest_interface,ethernet1/2,",",FALSE
+Palo Alto,Firewall,Traffic,19,log_profile,Log forwarding profile,string,,default,",",FALSE
+Palo Alto,Firewall,Traffic,20,session_id,Session ID,number,session_id,123456,",",FALSE
+Palo Alto,Firewall,Traffic,21,repeat_count,Repeat count,number,,1,",",FALSE
+Palo Alto,Firewall,Traffic,22,src_port,Source port,number,src_port,54321,",",FALSE
+Palo Alto,Firewall,Traffic,23,dst_port,Destination port,number,dest_port,443,",",FALSE
+Palo Alto,Firewall,Traffic,24,nat_src_port,NAT source port,number,src_translated_port,54321,",",FALSE
+Palo Alto,Firewall,Traffic,25,nat_dst_port,NAT destination port,number,dest_translated_port,443,",",FALSE
+Palo Alto,Firewall,Traffic,26,flags,Session flags,string,,0x400000,",",FALSE
+Palo Alto,Firewall,Traffic,27,protocol,IP protocol,string,transport,tcp,",",FALSE
+Palo Alto,Firewall,Traffic,28,action,Action taken,string,action,allow,",",FALSE
+Palo Alto,Firewall,Traffic,29,bytes,Total bytes,number,bytes,1500,",",FALSE
+Palo Alto,Firewall,Traffic,30,bytes_sent,Bytes sent,number,bytes_out,800,",",FALSE
+Palo Alto,Firewall,Traffic,31,bytes_received,Bytes received,number,bytes_in,700,",",FALSE
+Palo Alto,Firewall,Traffic,32,packets,Total packets,number,packets,10,",",FALSE
+Palo Alto,Firewall,Traffic,33,start_time,Session start time,timestamp,,15-01-2024 10:30,",",FALSE
+Palo Alto,Firewall,Traffic,34,elapsed,Elapsed time in seconds,number,duration,5,",",FALSE
+Palo Alto,Firewall,Traffic,35,category,URL category,string,category,business-and-economy,",",FALSE
+Cisco,ASA,Connection,0,timestamp,Syslog timestamp,timestamp,_time,01-01-2015 10:30,,FALSE
+Cisco,ASA,Connection,1,device_id,Device identifier,string,dvc,firewall01,,FALSE
+Cisco,ASA,Connection,2,message_id,ASA message ID,string,signature_id,302013,,FALSE
+Cisco,ASA,Connection,3,action,Connection action,string,action,Built,,FALSE
+Cisco,ASA,Connection,4,protocol,Protocol,string,transport,TCP,,FALSE
+Cisco,ASA,Connection,5,src_ip,Source IP,ip,src_ip,192.168.1.100,,FALSE
+Cisco,ASA,Connection,6,src_port,Source port,number,src_port,54321,,FALSE
+Cisco,ASA,Connection,7,dst_ip,Destination IP,ip,dest_ip,10.0.0.50,,FALSE
+Cisco,ASA,Connection,8,dst_port,Destination port,number,dest_port,443,,FALSE
+Cisco,ASA,Connection,9,src_interface,Source interface,string,src_zone,inside,,FALSE
+Cisco,ASA,Connection,10,dst_interface,Destination interface,string,dest_zone,outside,,FALSE
+Palo Alto,Firewall,Threat,0,receive_time,Time the log was received at the management plane,timestamp,_time,15-01-2024 10:31,",",FALSE
+Palo Alto,Firewall,Threat,1,serial_number,Serial number of the device,string,dvc,001234567890,",",FALSE
+Palo Alto,Firewall,Threat,2,type,Type of log (THREAT),string,,THREAT,",",FALSE
+Palo Alto,Firewall,Threat,3,subtype,"Threat subtype (e.g., virus, spyware, vulnerability, url)",string,action,virus,",",FALSE
+Palo Alto,Firewall,Threat,4,config_version,Config version,string,,10.2,",",FALSE
+Palo Alto,Firewall,Threat,5,time_generated,Time the log was generated on the dataplane,timestamp,,15-01-2024 10:31,",",FALSE
+Palo Alto,Firewall,Threat,6,source_ip,Source IP address,ip,src,10.10.10.15,",",FALSE
+Palo Alto,Firewall,Threat,7,destination_ip,Destination IP address,ip,dest,172.217.16.206,",",FALSE
+Palo Alto,Firewall,Threat,8,nat_source_ip,Source NAT IP address,ip,,192.0.2.10,",",FALSE
+Palo Alto,Firewall,Threat,9,nat_destination_ip,Destination NAT IP address,ip,,198.51.100.20,",",FALSE
+Palo Alto,Firewall,Threat,10,source_port,Source port,number,src_port,51522,",",FALSE
+Palo Alto,Firewall,Threat,11,destination_port,Destination port,number,dest_port,443,",",FALSE
+Palo Alto,Firewall,Threat,12,protocol,IP protocol,string,transport,tcp,",",FALSE
+Palo Alto,Firewall,Threat,13,application,Application,string,app,ssl,",",FALSE
+Palo Alto,Firewall,Threat,14,rule,Security policy rule name,string,rule,internet-access,",",FALSE
+Palo Alto,Firewall,Threat,15,source_zone,Source zone,string,,trust,",",FALSE
+Palo Alto,Firewall,Threat,16,destination_zone,Destination zone,string,,untrust,",",FALSE
+Palo Alto,Firewall,Threat,17,ingress_interface,Ingress interface,string,,ethernet1/1,",",FALSE
+Palo Alto,Firewall,Threat,18,egress_interface,Egress interface,string,,ethernet1/2,",",FALSE
+Palo Alto,Firewall,Threat,19,log_action,Log forwarding profile / log action,string,,forward-to-siem,",",FALSE
+Palo Alto,Firewall,Threat,20,session_id,Session ID,number,session_id,123456789,",",FALSE
+Palo Alto,Firewall,Threat,21,repeat_count,Repeat count / number of times this threat matched,number,,1,",",FALSE
+Palo Alto,Firewall,Threat,22,threat_id,Threat ID (signature ID),number,,37001,",",FALSE
+Palo Alto,Firewall,Threat,23,threat_name,Threat name / signature name,string,,Eicar-Test-Signature,",",FALSE
+Palo Alto,Firewall,Threat,24,category,Threat category,string,category,virus,",",FALSE
+Palo Alto,Firewall,Threat,25,severity,Threat severity,string,severity,high,",",FALSE
+Palo Alto,Firewall,Threat,26,direction,Traffic direction,string,,client-to-server,",",FALSE
+Palo Alto,Firewall,Threat,27,action_taken,"Action taken (alert, block, reset, etc.)",string,action,blocked,",",FALSE
+Palo Alto,Firewall,Threat,28,url,URL (if applicable),string,url,https://example.com/download.exe,",",FALSE
+Palo Alto,Firewall,Threat,29,file_name,File name (if applicable),string,file_name,download.exe,",",FALSE
+Palo Alto,Firewall,Threat,30,file_hash,File hash (if available),string,file_hash,b1946ac92492d2347c6235b4d2611184,",",FALSE
+Palo Alto,Firewall,Threat,31,source_user,Source user,string,user,DOMAIN\user1,",",FALSE
+Palo Alto,Firewall,Threat,32,destination_user,Destination user,string,,,",",FALSE
+Palo Alto,Firewall,Threat,33,device_name,Device name / hostname,string,dvc,PA-DC-FW-01,",",FALSE
+Palo Alto,Firewall,Threat,34,virtual_system,Virtual system (vsys),string,,vsys1,",",FALSE
+Palo Alto,Firewall,Threat,35,x_forwarded_for,X-Forwarded-For / client IP (if present),ip,,203.0.113.45,",",FALSE
+Palo Alto,Firewall,Threat,36,http_method,HTTP method (if present),string,,GET,",",FALSE
+Palo Alto,Firewall,Threat,37,user_agent,User agent (if present),string,,Mozilla/5.0,",",FALSE
+Palo Alto,Firewall,Threat,38,referer,HTTP referrer (if present),string,,https://example.com/,",",FALSE
+Palo Alto,Firewall,URL Filtering,0,receive_time,Time the log was received at the management plane,timestamp,_time,15-01-2024 10:32,",",FALSE
+Palo Alto,Firewall,URL Filtering,1,serial_number,Serial number of the device,string,dvc,001234567890,",",FALSE
+Palo Alto,Firewall,URL Filtering,2,type,Type of log (THREAT for URL filtering logs),string,,THREAT,",",FALSE
+Palo Alto,Firewall,URL Filtering,3,subtype,Subtype of threat log; value is url,string,action,url,",",FALSE
+Palo Alto,Firewall,URL Filtering,4,config_version,Config version,string,,10.2,",",FALSE
+Palo Alto,Firewall,URL Filtering,5,time_generated,Time the log was generated on the dataplane,timestamp,,15-01-2024 10:32,",",FALSE
+Palo Alto,Firewall,URL Filtering,6,source_ip,Source IP address,ip,src,10.10.10.20,",",FALSE
+Palo Alto,Firewall,URL Filtering,7,destination_ip,Destination IP address,ip,dest,151.101.1.69,",",FALSE
+Palo Alto,Firewall,URL Filtering,8,source_port,Source port,number,src_port,53644,",",FALSE
+Palo Alto,Firewall,URL Filtering,9,destination_port,Destination port,number,dest_port,443,",",FALSE
+Palo Alto,Firewall,URL Filtering,10,protocol,IP protocol,string,transport,tcp,",",FALSE
+Palo Alto,Firewall,URL Filtering,11,application,Application,string,app,ssl,",",FALSE
+Palo Alto,Firewall,URL Filtering,12,rule,Security policy rule name,string,rule,internet-access,",",FALSE
+Palo Alto,Firewall,URL Filtering,13,source_zone,Source zone,string,,trust,",",FALSE
+Palo Alto,Firewall,URL Filtering,14,destination_zone,Destination zone,string,,untrust,",",FALSE
+Palo Alto,Firewall,URL Filtering,15,ingress_interface,Ingress interface,string,,ethernet1/1,",",FALSE
+Palo Alto,Firewall,URL Filtering,16,egress_interface,Egress interface,string,,ethernet1/2,",",FALSE
+Palo Alto,Firewall,URL Filtering,17,log_action,Log forwarding profile / log action,string,,forward-to-siem,",",FALSE
+Palo Alto,Firewall,URL Filtering,18,session_id,Session ID,number,session_id,223456789,",",FALSE
+Palo Alto,Firewall,URL Filtering,19,repeat_count,Repeat count / number of URL hits in the session,number,,1,",",FALSE
+Palo Alto,Firewall,URL Filtering,20,url,URL requested,string,url,https://repo1.maven.org/maven2/,",",FALSE
+Palo Alto,Firewall,URL Filtering,21,url_category,URL category,string,category,software-download,",",FALSE
+Palo Alto,Firewall,URL Filtering,22,url_subcategory,URL subcategory (if available),string,,,",",FALSE
+Palo Alto,Firewall,URL Filtering,23,user_agent,User agent,string,,Mozilla/5.0,",",FALSE
+Palo Alto,Firewall,URL Filtering,24,source_user,Source user,string,user,DOMAIN\user2,",",FALSE
+Palo Alto,Firewall,URL Filtering,25,http_method,HTTP method,string,,GET,",",FALSE
+Palo Alto,Firewall,URL Filtering,26,http_status,HTTP response code (if logged),number,,200,",",FALSE
+Palo Alto,Firewall,URL Filtering,27,bytes_sent,Bytes sent,number,bytes_out,1024,",",FALSE
+Palo Alto,Firewall,URL Filtering,28,bytes_received,Bytes received,number,bytes_in,20480,",",FALSE
+Palo Alto,Firewall,URL Filtering,29,device_name,Device name / hostname,string,dvc,PA-DC-FW-01,",",FALSE
+Palo Alto,Firewall,URL Filtering,30,virtual_system,Virtual system (vsys),string,,vsys1,",",FALSE
+Palo Alto,Firewall,URL Filtering,31,misc,Additional fields / misc info,string,,,",",FALSE
+Microsoft,Windows,Windows Events,0,EventID,Windows Event ID,number,,4624,,FALSE
+Microsoft,Windows,Windows Events,1,Channel,Event log channel,string,,Security,,FALSE
+Microsoft,Windows,Windows Events,2,ProviderName,Event provider name,string,,Microsoft-Windows-Security-Auditing,,FALSE
+Microsoft,Windows,Windows Events,3,TimeCreated,Event time (UTC),timestamp,_time,2026-02-11T08:15:32Z,,FALSE
+Microsoft,Windows,Windows Events,4,Computer,Hostname that generated the event,string,host,WIN-01.corp.local,,FALSE
+Microsoft,Windows,Windows Events,5,RecordNumber,Event record ID,number,,1906614678,,FALSE
+Microsoft,Windows,Windows Events,6,Task,Task category,number,,12544,,FALSE
+Microsoft,Windows,Windows Events,7,Keywords,Keywords bitmask,string,,0x8020000000000000,,FALSE
+Microsoft,Windows,Windows Events,8,SubjectUserSid,Subject Security ID,string,,S-1-5-18,,FALSE
+Microsoft,Windows,Windows Events,9,SubjectUserName,Subject account name,string,user,SYSTEM,,FALSE
+Microsoft,Windows,Windows Events,10,SubjectDomainName,Subject domain,string,,NT AUTHORITY,,FALSE
+Microsoft,Windows,Windows Events,11,SubjectLogonId,Subject logon ID,string,,0x3E7,,FALSE
+Microsoft,Windows,Windows Events,12,TargetUserSid,Target Security ID,string,,S-1-5-21-...,,FALSE
+Microsoft,Windows,Windows Events,13,TargetUserName,Target account name,string,user,jdoe,,FALSE
+Microsoft,Windows,Windows Events,14,TargetDomainName,Target domain,string,,CORP,,FALSE
+Microsoft,Windows,Windows Events,15,LogonType,Logon type,number,,3,,FALSE
+Microsoft,Windows,Windows Events,16,IpAddress,Source IP address (if network logon),ip,src,10.10.10.100,,FALSE
+Microsoft,Windows,Windows Events,17,IpPort,Source port,number,src_port,51522,,FALSE
+Microsoft,Windows,Windows Events,18,WorkstationName,Source workstation name (if present),string,,DESKTOP-01,,FALSE
+Microsoft,Windows,Windows Events,19,ProcessName,Process name/path (if present),string,process,C:\Windows\System32\lsass.exe,,FALSE
+Microsoft,Windows,Windows Events,20,AuthenticationPackageName,Authentication package (Kerberos/NTLM),string,,Kerberos,,FALSE
+Microsoft,Windows,Windows Events,21,Status,Status code (if failure),string,status,0x0,,FALSE
+Microsoft,Windows,Windows Events,22,FailureReason,Failure reason text (if failure),string,,,,FALSE
+Linux,Syslog,Linux (Syslog) RFC5424,0,PRI,Syslog priority (facility*8 + severity),number,,134, ,FALSE
+Linux,Syslog,Linux (Syslog) RFC5424,1,VERSION,Syslog version (RFC5424 uses 1),number,,1, ,FALSE
+Linux,Syslog,Linux (Syslog) RFC5424,2,TIMESTAMP,Timestamp (RFC3339),timestamp,_time,2026-02-11T08:15:32.123Z, ,FALSE
+Linux,Syslog,Linux (Syslog) RFC5424,3,HOSTNAME,Hostname or IP of originator,string,host,linux-01, ,FALSE
+Linux,Syslog,Linux (Syslog) RFC5424,4,APP-NAME,Application name,string,process_name,sshd, ,FALSE
+Linux,Syslog,Linux (Syslog) RFC5424,5,PROCID,Process ID,string,process_id,1234, ,FALSE
+Linux,Syslog,Linux (Syslog) RFC5424,6,MSGID,Message ID,string,,ID47, ,FALSE
+Linux,Syslog,Linux (Syslog) RFC5424,7,STRUCTURED-DATA,Structured data (key-value blocks),string,,"[exampleSDID@32473 iut=""3"" eventSource=""Application"" eventID=""1011""]", ,FALSE
+Linux,Syslog,Linux (Syslog) RFC5424,8,MSG,Free-form message,string,message,Accepted password for user1 from 10.10.10.10 port 51522 ssh2, ,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,0,TimeGenerated,Event time (ingestion),timestamp,_time,2026-02-11T08:15:32Z,,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,1,OperationName,Operation name,string,,Sign-in activity,,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,2,ResultType,Result type / status code,string,status,0,,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,3,ResultDescription,Result description,string,,Success,,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,4,UserPrincipalName,User principal name,string,user,user@contoso.com,,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,5,UserId,User object ID,string,,11111111-2222-3333-4444-555555555555,,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,6,AppDisplayName,Application display name,string,app,Microsoft Teams,,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,7,AppId,Application (client) ID,string,,00000003-0000-0ff1-ce00-000000000000,,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,8,IPAddress,Client IP address,ip,src,203.0.113.10,,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,9,ClientAppUsed,Client app used,string,,Browser,,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,10,DeviceDetail.displayName,Device name,string,src_host,LAPTOP-01,,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,11,DeviceDetail.operatingSystem,OS,string,,Windows 11,,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,12,ConditionalAccessStatus,Conditional access status,string,,success,,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,13,LocationDetails.countryOrRegion,Country/Region,string,,IN,,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,14,LocationDetails.city,City,string,,Bengaluru,,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,15,CorrelationId,Correlation ID,string,,aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee,,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,16,ResourceDisplayName,Resource,string,,Microsoft Graph,,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,17,RiskLevelAggregated,Risk level (aggregated),string,risk,low,,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,18,RiskEventTypes,Risk event types,string,,[],,FALSE
+Microsoft,Entra ID,Azure AD SignInLogs,19,Status.errorCode,Error code,number,,0,,FALSE
+Microsoft,Entra ID,Azure AD AuditLogs,0,TimeGenerated,Event time (ingestion),timestamp,_time,2026-02-11T08:20:10Z,,FALSE
+Microsoft,Entra ID,Azure AD AuditLogs,1,OperationName,Audit operation name,string,,Add user,,FALSE
+Microsoft,Entra ID,Azure AD AuditLogs,2,Category,Audit category,string,category,UserManagement,,FALSE
+Microsoft,Entra ID,Azure AD AuditLogs,3,ActivityDisplayName,Activity display name,string,,Add user,,FALSE
+Microsoft,Entra ID,Azure AD AuditLogs,4,Result,Result,string,status,success,,FALSE
+Microsoft,Entra ID,Azure AD AuditLogs,5,ResultReason,Result reason,string,,,,FALSE
+Microsoft,Entra ID,Azure AD AuditLogs,6,InitiatedBy.user.userPrincipalName,Initiator UPN,string,src_user,admin@contoso.com,,FALSE
+Microsoft,Entra ID,Azure AD AuditLogs,7,InitiatedBy.user.id,Initiator user ID,string,,99999999-8888-7777-6666-555555555555,,FALSE
+Microsoft,Entra ID,Azure AD AuditLogs,8,TargetResources[0].userPrincipalName,Target UPN,string,user,newuser@contoso.com,,FALSE
+Microsoft,Entra ID,Azure AD AuditLogs,9,TargetResources[0].id,Target object ID,string,,22222222-3333-4444-5555-666666666666,,FALSE
+Microsoft,Entra ID,Azure AD AuditLogs,10,CorrelationId,Correlation ID,string,,bbbbbbbb-cccc-dddd-eeee-ffffffffffff,,FALSE
+Microsoft,Entra ID,Azure AD AuditLogs,11,LoggedByService,Service that logged the event,string,,Core Directory,,FALSE
+Microsoft,Entra ID,Azure AD AuditLogs,12,AdditionalDetails,Additional details,string,,[],,FALSE
+Microsoft,Entra ID,Azure AD AuditLogs,13,Id,Audit record ID,string,,cccccccc-dddd-eeee-ffff-000000000000,,FALSE
+Microsoft,Entra ID,Azure AD AuditLogs,14,TenantId,Tenant ID,string,,dddddddd-eeee-ffff-0000-111111111111,,FALSE
+Cisco,ASA,Cisco ASA,0,timestamp,Syslog timestamp,timestamp,_time,01-02-2011 08:15, ,FALSE
+Cisco,ASA,Cisco ASA,1,hostname,Device hostname,string,dvc,ASA-EDGE-01, ,FALSE
+Cisco,ASA,Cisco ASA,2,facility,Syslog facility,string,,ASA, ,FALSE
+Cisco,ASA,Cisco ASA,3,severity,Syslog severity,number,severity,6, ,FALSE
+Cisco,ASA,Cisco ASA,4,message_id,ASA message ID,number,,302013, ,FALSE
+Cisco,ASA,Cisco ASA,5,action,Action,string,action,Built outbound TCP connection, ,FALSE
+Cisco,ASA,Cisco ASA,6,protocol,Protocol,string,transport,TCP, ,FALSE
+Cisco,ASA,Cisco ASA,7,src_interface,Source interface,string,,inside, ,FALSE
+Cisco,ASA,Cisco ASA,8,src_ip,Source IP,ip,src,10.10.10.10, ,FALSE
+Cisco,ASA,Cisco ASA,9,src_port,Source port,number,src_port,51522, ,FALSE
+Cisco,ASA,Cisco ASA,10,dst_interface,Destination interface,string,,outside, ,FALSE
+Cisco,ASA,Cisco ASA,11,dst_ip,Destination IP,ip,dest,198.51.100.10, ,FALSE
+Cisco,ASA,Cisco ASA,12,dst_port,Destination port,number,dest_port,443, ,FALSE
+Cisco,ASA,Cisco ASA,13,user,Username (if present),string,user,jdoe, ,FALSE
+Cisco,ASA,Cisco ASA,14,bytes,Bytes transferred (if present),number,bytes,12345, ,FALSE
+Cisco,ASA,Cisco ASA,15,message,Raw message text,string,message,%ASA-6-302013: Built outbound TCP connection ..., ,FALSE
+Check Point,Firewall,Check Point Firewall,0,time,Event time,timestamp,_time,2026-02-11T08:15:32Z, ,FALSE
+Check Point,Firewall,Check Point Firewall,1,action,Action,string,action,Accept, ,FALSE
+Check Point,Firewall,Check Point Firewall,2,src,Source IP,ip,src,10.10.10.10, ,FALSE
+Check Point,Firewall,Check Point Firewall,3,dst,Destination IP,ip,dest,198.51.100.10, ,FALSE
+Check Point,Firewall,Check Point Firewall,4,s_port,Source port,number,src_port,51522, ,FALSE
+Check Point,Firewall,Check Point Firewall,5,service,Service name,string,dest_port,https, ,FALSE
+Check Point,Firewall,Check Point Firewall,6,proto,Protocol,string,transport,tcp, ,FALSE
+Check Point,Firewall,Check Point Firewall,7,rule_name,Rule name,string,rule,Internet_Access, ,FALSE
+Check Point,Firewall,Check Point Firewall,8,policy_name,Policy name,string,,Standard, ,FALSE
+Check Point,Firewall,Check Point Firewall,9,product,Product,string,,Firewall, ,FALSE
+Check Point,Firewall,Check Point Firewall,10,origin,Log origin module,string,,fw, ,FALSE
+Check Point,Firewall,Check Point Firewall,11,severity,Severity,string,severity,low, ,FALSE
+Check Point,Firewall,Check Point Firewall,12,confidence,Confidence,string,,high, ,FALSE
+Check Point,Firewall,Check Point Firewall,13,src_user_name,Source user name (if identified),string,user,CORP\jdoe, ,FALSE
+Check Point,Firewall,Check Point Firewall,14,dst_user_name,Destination user name (if identified),string,,, ,FALSE
+Check Point,Firewall,Check Point Firewall,15,app,Application (if available),string,app,SSL, ,FALSE
+Check Point,Firewall,Check Point Firewall,16,ifname,Interface name,string,,eth0, ,FALSE
+Check Point,Firewall,Check Point Firewall,17,logid,Log ID,string,,{1234-5678-...}, ,FALSE
+Check Point,Firewall,Check Point Firewall,18,message,Raw message/description,string,message,Accept HTTPS to 198.51.100.10, ,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,0,timestamp,Event timestamp,timestamp,_time,2026-02-11T08:15:32Z,,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,1,event_simpleName,Event name/type,string,,ProcessRollup2,,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,2,event_platform,Platform,string,,Win,,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,3,aid,Agent ID,string,,abcd1234efgh5678ijkl9012mnop3456,,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,4,cid,Customer ID,string,,1234567890abcdef1234567890abcdef,,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,5,ComputerName,Endpoint hostname,string,host,WIN-01,,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,6,UserName,User name,string,user,CORP\jdoe,,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,7,LocalIP,Local IP,ip,src,10.10.10.20,,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,8,RemoteIP,Remote IP,ip,dest,203.0.113.50,,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,9,CommandLine,Process command line,string,process,powershell.exe -enc ...,,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,10,ImageFileName,Process image filename,string,process_name,powershell.exe,,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,11,FilePath,Process path,string,,C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe,,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,12,ParentBaseFileName,Parent process filename,string,parent_process_name,explorer.exe,,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,13,ParentCommandLine,Parent process command line,string,parent_process,explorer.exe,,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,14,SHA256HashData,SHA256 hash,string,file_hash,...,,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,15,MD5HashData,MD5 hash,string,file_hash,...,,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,16,SensorId,Sensor ID,string,,123456789,,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,17,Tactic,MITRE tactic (if enriched),string,,Execution,,FALSE
+CrowdStrike,Falcon,CrowdStrike EDR,18,Technique,MITRE technique (if enriched),string,,T1059.001,,FALSE
+Microsoft,Microsoft 365,Office 365,0,CreationTime,Event creation time,timestamp,_time,2026-02-11T08:15:32Z,,FALSE
+Microsoft,Microsoft 365,Office 365,1,RecordType,Record type identifier,number,,15,,FALSE
+Microsoft,Microsoft 365,Office 365,2,Operation,Operation name,string,action,UserLoggedIn,,FALSE
+Microsoft,Microsoft 365,Office 365,3,UserId,User identifier (UPN),string,user,user@contoso.com,,FALSE
+Microsoft,Microsoft 365,Office 365,4,ClientIP,Client IP address,ip,src,203.0.113.10,,FALSE
+Microsoft,Microsoft 365,Office 365,5,Workload,Workload (Exchange/SharePoint/Teams/AzureActiveDirectory),string,,AzureActiveDirectory,,FALSE
+Microsoft,Microsoft 365,Office 365,6,OrganizationId,Organization (tenant) ID,string,,dddddddd-eeee-ffff-0000-111111111111,,FALSE
+Microsoft,Microsoft 365,Office 365,7,UserAgent,User agent,string,,Mozilla/5.0,,FALSE
+Microsoft,Microsoft 365,Office 365,8,ResultStatus,Result status,string,status,Succeeded,,FALSE
+Microsoft,Microsoft 365,Office 365,9,ObjectId,Object ID acted on,string,object,user@contoso.com,,FALSE
+Microsoft,Microsoft 365,Office 365,10,CorrelationId,Correlation ID,string,,aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee,,FALSE
+Microsoft,Microsoft 365,Office 365,11,Parameters,Parameters (key/value),string,,[{Name:...}],,FALSE
+Microsoft,Microsoft 365,Office 365,12,Id,Unique record ID,string,,...,,FALSE
+Proofpoint,TAP,Proofpoint (TAP),0,timestamp,Event timestamp,timestamp,_time,2026-02-11T08:15:32Z,,FALSE
+Proofpoint,TAP,Proofpoint (TAP),1,eventType,Event type (click/message; blocked/permitted),string,action,clicksBlocked,,FALSE
+Proofpoint,TAP,Proofpoint (TAP),2,campaignId,Campaign ID,string,,123456,,FALSE
+Proofpoint,TAP,Proofpoint (TAP),3,messageId,Message ID,string,,<CAF...@mail>,,FALSE
+Proofpoint,TAP,Proofpoint (TAP),4,sender,Sender email,string,src_user,attacker@example.com,,FALSE
+Proofpoint,TAP,Proofpoint (TAP),5,recipient,Recipient email,string,user,user@contoso.com,,FALSE
+Proofpoint,TAP,Proofpoint (TAP),6,subject,Email subject,string,,Invoice,,FALSE
+Proofpoint,TAP,Proofpoint (TAP),7,threatId,Threat ID,string,,c5480b...,,FALSE
+Proofpoint,TAP,Proofpoint (TAP),8,threatType,Threat type (URL/Attachment),string,category,url,,FALSE
+Proofpoint,TAP,Proofpoint (TAP),9,threatStatus,Threat status (active/cleared),string,,active,,FALSE
+Proofpoint,TAP,Proofpoint (TAP),10,severity,Threat severity,string,severity,high,,FALSE
+Proofpoint,TAP,Proofpoint (TAP),11,url,Clicked URL (if applicable),string,url,http://malicious.example.com,,FALSE
+Proofpoint,TAP,Proofpoint (TAP),12,userAgent,User agent (if click),string,,Mozilla/5.0,,FALSE
+Proofpoint,TAP,Proofpoint (TAP),13,ip,Client IP (if click),ip,src,203.0.113.10,,FALSE
+Proofpoint,TAP,Proofpoint (TAP),14,action,Disposition/action,string,action,blocked,,FALSE
+Proofpoint,TAP,Proofpoint (TAP),15,raw,Raw JSON event,string,,{...},,FALSE
+Proofpoint,PoD,Proofpoint on Demand,0,timestamp,Event timestamp,timestamp,_time,2026-02-11T08:15:32Z,,FALSE
+Proofpoint,PoD,Proofpoint on Demand,1,type,Log record type,string,category,message,,FALSE
+Proofpoint,PoD,Proofpoint on Demand,2,messageId,Message ID,string,,<CAF...@mail>,,FALSE
+Proofpoint,PoD,Proofpoint on Demand,3,sender,Sender email,string,src_user,attacker@example.com,,FALSE
+Proofpoint,PoD,Proofpoint on Demand,4,recipient,Recipient email,string,user,user@contoso.com,,FALSE
+Proofpoint,PoD,Proofpoint on Demand,5,subject,Email subject,string,,Payroll update,,FALSE
+Proofpoint,PoD,Proofpoint on Demand,6,direction,Mail direction (inbound/outbound),string,,inbound,,FALSE
+Proofpoint,PoD,Proofpoint on Demand,7,disposition,Disposition (delivered/quarantined/rejected),string,action,quarantined,,FALSE
+Proofpoint,PoD,Proofpoint on Demand,8,policy,Policy / rule name,string,rule,Anti-Spam,,FALSE
+Proofpoint,PoD,Proofpoint on Demand,9,spamScore,Spam score,number,,95,,FALSE
+Proofpoint,PoD,Proofpoint on Demand,10,malware,Malware detected flag/name,string,category,Eicar-Test-Signature,,FALSE
+Proofpoint,PoD,Proofpoint on Demand,11,urlCount,Number of URLs,number,,2,,FALSE
+Proofpoint,PoD,Proofpoint on Demand,12,attachmentCount,Number of attachments,number,,1,,FALSE
+Proofpoint,PoD,Proofpoint on Demand,13,clientIp,Connecting client IP (SMTP),ip,src,198.51.100.20,,FALSE
+Proofpoint,PoD,Proofpoint on Demand,14,helo,SMTP HELO/EHLO,string,,mail.example.com,,FALSE
+Proofpoint,PoD,Proofpoint on Demand,15,raw,Raw JSON record,string,,{...},,FALSE
+Zscaler,ZIA,Zscaler Proxy,0,datetime,Event time,timestamp,_time,2026-02-11T08:15:32Z,,FALSE
+Zscaler,ZIA,Zscaler Proxy,1,login,User login,string,user,user@contoso.com,,FALSE
+Zscaler,ZIA,Zscaler Proxy,2,dept,Department,string,,IT,,FALSE
+Zscaler,ZIA,Zscaler Proxy,3,location,Location,string,,Bangalore,,FALSE
+Zscaler,ZIA,Zscaler Proxy,4,cip,Client IP,ip,src,203.0.113.10,,FALSE
+Zscaler,ZIA,Zscaler Proxy,5,sip,Server IP,ip,dest,151.101.1.69,,FALSE
+Zscaler,ZIA,Zscaler Proxy,6,sport,Server port,number,dest_port,443,,FALSE
+Zscaler,ZIA,Zscaler Proxy,7,url,URL,string,url,https://example.com/,,FALSE
+Zscaler,ZIA,Zscaler Proxy,8,reqaction,Request action,string,action,Allowed,,FALSE
+Zscaler,ZIA,Zscaler Proxy,9,urlcat,URL category,string,category,Business and Economy,,FALSE
+Zscaler,ZIA,Zscaler Proxy,10,appname,Application name,string,app,HTTPS,,FALSE
+Zscaler,ZIA,Zscaler Proxy,11,respcode,Response code,number,,200,,FALSE
+Zscaler,ZIA,Zscaler Proxy,12,reqsize,Request size bytes,number,bytes_out,512,,FALSE
+Zscaler,ZIA,Zscaler Proxy,13,respsize,Response size bytes,number,bytes_in,20480,,FALSE
+Zscaler,ZIA,Zscaler Proxy,14,useragent,User agent,string,,Mozilla/5.0,,FALSE
+Zscaler,ZIA,Zscaler Proxy,15,deviceowner,Device owner,string,,user,,FALSE
+Zscaler,ZIA,Zscaler Proxy,16,reason,Reason/Policy,string,rule,WebPolicy1,,FALSE
