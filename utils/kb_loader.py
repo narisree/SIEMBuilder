@@ -82,16 +82,16 @@ class KBLoader:
         }
         return catalog
     
-    def get_available_sources(self) -> Dict:
+    def get_available_sources(self) -> List[str]:
         """
-        Get all available log sources from the catalog.
+        Get list of available log source slugs.
         
         Returns:
-            Dictionary of source slugs to their metadata
+            List of source slugs
         """
-        return self._sources_catalog
+        return list(self._sources_catalog.keys())
     
-    def load_kb_content(self, source_slug: str) -> Dict:
+    def load_kb_content(self, source_slug: str) -> str:
         """
         Load the knowledge base content for a specific log source.
         
@@ -99,31 +99,18 @@ class KBLoader:
             source_slug: The slug identifier for the log source
             
         Returns:
-            Dictionary with 'success', 'content', and 'message' keys
+            The KB content as string, or None if not found
         """
         kb_file = self.kb_path / f"{source_slug}.md"
         
         try:
             if kb_file.exists():
                 with open(kb_file, 'r', encoding='utf-8') as f:
-                    content = f.read()
-                return {
-                    "success": True,
-                    "content": content,
-                    "message": "KB content loaded successfully"
-                }
+                    return f.read()
             else:
-                return {
-                    "success": False,
-                    "content": "",
-                    "message": f"Knowledge base file not found: {kb_file}"
-                }
+                return None
         except Exception as e:
-            return {
-                "success": False,
-                "content": "",
-                "message": f"Error loading KB content: {str(e)}"
-            }
+            return None
     
     def get_references(self, source_slug: str) -> Dict:
         """
@@ -170,6 +157,21 @@ class KBLoader:
                 "data": {},
                 "message": f"Error loading references: {str(e)}"
             }
+    
+    def get_references_for_source(self, source_slug: str) -> Dict:
+        """
+        Get references for a specific log source (simplified version for app.py).
+        
+        Args:
+            source_slug: The slug identifier for the log source
+            
+        Returns:
+            Dictionary of references or empty dict if not found
+        """
+        refs_data = self.get_references(source_slug)
+        if refs_data["success"]:
+            return refs_data["data"]
+        return {}
     
     def get_source_metadata(self, source_slug: str) -> Optional[Dict]:
         """
@@ -218,12 +220,12 @@ class KBLoader:
         Returns:
             List of section headings found in the KB
         """
-        kb_data = self.load_kb_content(source_slug)
-        if not kb_data["success"]:
+        kb_content = self.load_kb_content(source_slug)
+        if not kb_content:
             return []
         
         sections = []
-        for line in kb_data["content"].split('\n'):
+        for line in kb_content.split('\n'):
             if line.startswith('## '):
                 sections.append(line[3:].strip())
             elif line.startswith('### '):
