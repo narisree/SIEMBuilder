@@ -171,25 +171,41 @@ Guidelines:
             with st.spinner("Thinking..."):
                 try:
                     claude = ClaudeClient(api_key)
-                    response = claude.chat(messages, system_prompt=system_prompt)
-                    st.markdown(response)
-                    st.session_state.messages.append({"role": "assistant", "content": response})
+                    response_data = claude.get_response(
+                        question=prompt,
+                        kb_content=kb_content or "",
+                        source_name=get_display_name(selected_source),
+                        chat_history=st.session_state.messages[:-1]
+                    )
+                    
+                    if response_data["success"]:
+                        st.markdown(response_data["response"])
+                        st.session_state.messages.append({"role": "assistant", "content": response_data["response"]})
+                    else:
+                        st.error(f"Error: {response_data['message']}")
                 except Exception as e:
                     st.error(f"Error: {str(e)}")
 
 with tab4:
     st.header("Use Cases")
     
+    # Download button at the top
     col1, col2 = st.columns([3, 1])
     
     with col1:
         st.subheader("Security Detection Use Cases")
     
     with col2:
+        # Initialize show_download if not present
+        if "show_download" not in st.session_state:
+            st.session_state.show_download = False
+        
         if st.button("🔄 Download Splunk Use Cases", use_container_width=True):
-            st.session_state.show_download = True
+            st.session_state.show_download = not st.session_state.show_download
+            st.rerun()
     
-    if "show_download" in st.session_state and st.session_state.show_download:
+    # Download section - only show if button was clicked
+    if st.session_state.show_download:
         st.markdown("---")
         st.subheader("Download Splunk Public Use Cases")
         
@@ -209,7 +225,7 @@ with tab4:
                 
                 update_info = downloader.check_for_updates()
                 
-                if not update_info["needs_update"]:
+                if not update_info.get("needs_update", False):
                     metadata = downloader._load_sync_metadata()
                     if metadata:
                         st.success("✓ Already up to date")
@@ -217,19 +233,23 @@ with tab4:
                         st.info(f"Total detections: {metadata['total_detections']}")
                     
                     if st.button("Force Re-download"):
-                        st.session_state.force_download = True
+                        # Clear metadata to force re-download
+                        import os
+                        metadata_file = downloader.metadata_file
+                        if metadata_file.exists():
+                            os.remove(metadata_file)
                         st.rerun()
                 
                 else:
                     if update_info.get("error"):
                         st.error(f"Error checking updates: {update_info['error']}")
-                    elif update_info["is_first_sync"]:
+                    elif update_info.get("is_first_sync"):
                         st.info("📦 First-time sync - this will download all use cases from Splunk's security content repository.")
                         st.warning("Note: This may take 5-10 minutes and will use Claude API credits.")
                     else:
                         st.info(f"📦 Updates available:")
-                        st.write(f"- {update_info['new_count']} new detections")
-                        st.write(f"- {update_info['modified_count']} updated detections")
+                        st.write(f"- {update_info.get('new_count', 0)} new detections")
+                        st.write(f"- {update_info.get('modified_count', 0)} updated detections")
                     
                     if st.button("Start Download", type="primary"):
                         progress_bar = st.progress(0)
@@ -248,7 +268,7 @@ with tab4:
                             if result.get("is_first_sync"):
                                 st.info(f"Total: {result['total_processed']} detections")
                             else:
-                                st.info(f"Added: {result['new_count']}, Updated: {result['modified_count']}")
+                                st.info(f"Added: {result.get('new_count', 0)}, Updated: {result.get('modified_count', 0)}")
                             
                             st.session_state.show_download = False
                             st.rerun()
@@ -257,8 +277,8 @@ with tab4:
         
         except Exception as e:
             st.error(f"Error: {str(e)}")
-    
-    st.markdown("---")
+        
+        st.markdown("---")
     
     # Internal Library Use Cases
     st.subheader("📚 Internal Library")
