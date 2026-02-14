@@ -313,4 +313,3 @@ st.markdown("""
     <p>SIEM Onboarding Assistant v1.0 | Free AI Support (Groq, HuggingFace)</p>
 </div>
 """, unsafe_allow_html=True)
-```
