@@ -308,7 +308,7 @@ with tab4:
     
     st.markdown("---")
     
-    # External Splunk Use Cases
+    # External Splunk Use Cases - NOW WITH SAME FORMAT AS INTERNAL
     st.subheader("🌐 Splunk Public Use Cases")
     use_cases_file = kb_loader.kb_path / f"{selected_source}_usecases.json"
     if use_cases_file.exists():
@@ -328,11 +328,15 @@ with tab4:
                 st.markdown("**SPL Query:**")
                 st.code(uc.get('spl_query', 'N/A'), language='spl')
                 
-                if uc.get('l1_guidance'):
-                    st.markdown(f"**L1 Guidance:** {uc.get('l1_guidance')}")
+                # SAME FORMAT AS INTERNAL LIBRARY
+                if uc.get('L1_What_It_Detects'):
+                    st.markdown("**What It Detects (L1 Guidance):**")
+                    st.info(uc['L1_What_It_Detects'])
                 
-                if uc.get('implementation_notes'):
-                    st.markdown(f"**Implementation Notes:** {uc.get('implementation_notes')}")
+                if uc.get('L1_Validation_Steps'):
+                    st.markdown("**Validation Steps:**")
+                    for step in uc['L1_Validation_Steps']:
+                        st.markdown(f"- {step}")
     else:
         st.info(f"No Splunk public use cases downloaded yet. Click 'Download Splunk Use Cases' above to fetch them.")
 
