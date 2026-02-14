@@ -232,9 +232,22 @@ Output format for each detection (JSON array):
   "mitre_tactics": "from tags (tactic names)",
   "description": "from description field",
   "spl_query": "from search field",
-  "l1_guidance": "Brief analyst guidance based on description",
-  "implementation_notes": "from how_to_implement field"
+  "L1_What_It_Detects": "2-3 sentence explanation of what this detection identifies, written for L1 analysts. Focus on the threat behavior and why it matters.",
+  "L1_Validation_Steps": [
+    "Step 1: Specific action to verify the alert (e.g., 'Check if the source IP belongs to your organization')",
+    "Step 2: Another validation step",
+    "Step 3: Another validation step",
+    "Step 4: Another validation step",
+    "Step 5: Another validation step",
+    "Step 6: Final step (e.g., 'If still suspicious, escalate to L2')"
+  ]
 }
+
+CRITICAL L1 Guidance Requirements:
+- L1_What_It_Detects: Must be clear, concise, non-technical explanation suitable for junior analysts
+- L1_Validation_Steps: Must provide 5-6 ACTIONABLE steps that an L1 analyst can perform
+- Steps should be specific to the detection, not generic
+- Include checks like: verify source/destination, check user context, review timing, check threat intelligence, confirm with asset owner, escalation criteria
 
 Return ONLY valid JSON array. No markdown, no explanations."""
 
@@ -248,7 +261,8 @@ Return ONLY valid JSON array. No markdown, no explanations."""
 
 {combined_yaml}
 
-Remember: Return ONLY the JSON array, no markdown formatting."""
+Remember: Return ONLY the JSON array, no markdown formatting.
+Ensure each detection has L1_What_It_Detects as a string and L1_Validation_Steps as an array of 5-6 specific steps."""
 
         messages = [{"role": "user", "content": prompt}]
         
