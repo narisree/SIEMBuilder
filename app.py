@@ -2,7 +2,6 @@
 SIEM Log Source Onboarding Assistant
 A Streamlit application to help Security Engineers onboard log sources into Splunk.
 Supports multiple AI backends: Groq (free), HuggingFace (free), Claude (paid), Ollama (local).
-Now includes CIM Mapping Tool for field-to-CIM data model mapping.
 """
 
 import streamlit as st
@@ -41,7 +40,6 @@ st.markdown("""
     .technique-badge { background-color: #6f42c1; color: white; padding: 3px 10px; border-radius: 4px; font-size: 0.8rem; display: inline-block; margin-bottom: 5px; }
     .l1-guidance-box { background-color: #e8f4f8; border: 1px solid #17a2b8; border-radius: 8px; padding: 1rem; margin-top: 1rem; }
     .l1-validation-box { background-color: #fff8e6; border: 1px solid #ffc107; border-radius: 8px; padding: 1rem; margin-top: 1rem; }
-    .cim-card { background-color: #f0f7ff; border: 1px solid #0066cc; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -146,9 +144,9 @@ st.markdown('<p class="main-header">🛡️ SIEM Log Source Onboarding Assistant
 st.markdown(f'<p class="sub-header">Currently viewing: <strong>{log_sources[selected_source]["display_name"]}</strong></p>', unsafe_allow_html=True)
 
 # Create tabs
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📘 Integration Guide", "🔗 References", "🎯 Use Cases", 
-    "🔧 CIM Mapper", "💬 AI Chat", "⚙️ AI Setup"
+    "💬 AI Chat", "⚙️ AI Setup"
 ])
 
 # Tab 1: Integration Guide
@@ -203,283 +201,8 @@ with tab3:
     else:
         st.warning("No use cases found for this log source.")
 
-# Tab 4: CIM Mapper
+# Tab 4: AI Chat
 with tab4:
-    st.markdown("### 🔧 Splunk CIM Field Mapper")
-    st.markdown("*Upload log samples to map fields to Splunk CIM data models*")
-
-    # Check CIM module availability
-    try:
-        from utils.cim.log_parser import LogParser
-        from utils.cim.vector_store import initialize_vector_store
-        from utils.cim.llm_chain import create_mapping_chain
-        from utils.cim.output_generator import OutputGenerator
-        from utils.cim.ai_field_parser import create_ai_field_parser
-        from utils.cim.vendor_doc_loader import create_vendor_doc_loader
-        CIM_AVAILABLE = True
-    except ImportError as e:
-        CIM_AVAILABLE = False
-        cim_error = str(e)
-
-    if not CIM_AVAILABLE:
-        st.warning(f"CIM Mapper dependencies missing: {cim_error}")
-        st.info("Install with: `pip install chromadb sentence-transformers`")
-    else:
-        # Deployment mode
-        deployment_mode = st.selectbox(
-            "🎯 Deployment Mode:",
-            ["Both (Cloud + Enterprise)", "Splunk Cloud (GUI)", "Splunk Enterprise (Config)"]
-        )
-        mode_map = {"Both (Cloud + Enterprise)": "both", "Splunk Cloud (GUI)": "cloud", "Splunk Enterprise (Config)": "enterprise"}
-        selected_mode = mode_map[deployment_mode]
-
-        st.markdown("---")
-
-        # Enhanced AI Options
-        st.markdown("#### 🤖 AI-Enhanced Field Analysis")
-        col_opt1, col_opt2 = st.columns(2)
-        with col_opt1:
-            use_ai_field_parsing = st.checkbox(
-                "Enable AI Field Parsing",
-                value=True,
-                help="Use AI to semantically analyze fields for better CIM mapping accuracy"
-            )
-        with col_opt2:
-            use_vendor_docs = st.checkbox(
-                "Include Vendor Documentation",
-                value=False,
-                help="Upload vendor documentation to improve field interpretation"
-            )
-
-        st.markdown("---")
-        st.markdown("#### 📤 Upload Files")
-
-        col1, col2 = st.columns([2, 1])
-        with col1:
-            uploaded_file = st.file_uploader(
-                "Upload log file",
-                type=["log", "txt", "json", "csv", "xml"],
-                key="log_file_uploader"
-            )
-        with col2:
-            sourcetype_name = st.text_input("Sourcetype Name", placeholder="my_logs")
-
-        # Optional vendor documentation upload
-        vendor_doc_file = None
-        vendor_doc_result = None
-        if use_vendor_docs:
-            vendor_doc_file = st.file_uploader(
-                "Upload Vendor Documentation (Optional)",
-                type=["pdf", "md", "txt", "html"],
-                key="vendor_doc_uploader",
-                help="Upload vendor field documentation for improved accuracy"
-            )
-
-            if vendor_doc_file:
-                with st.spinner("Processing vendor documentation..."):
-                    vendor_loader = create_vendor_doc_loader()
-                    vendor_doc_result = vendor_loader.load_document(
-                        vendor_doc_file.read(),
-                        vendor_doc_file.name
-                    )
-
-                    if vendor_doc_result.success:
-                        st.success(f"Loaded vendor documentation ({vendor_doc_result.doc_type})")
-
-                        # Show extracted info
-                        col_v1, col_v2 = st.columns(2)
-                        with col_v1:
-                            if vendor_doc_result.extracted_vendor:
-                                st.info(f"Vendor: {vendor_doc_result.extracted_vendor}")
-                        with col_v2:
-                            if vendor_doc_result.field_definitions:
-                                st.info(f"Field definitions found: {len(vendor_doc_result.field_definitions)}")
-
-                        with st.expander("📖 Extracted Field Definitions"):
-                            if vendor_doc_result.field_definitions:
-                                for fname, fdesc in list(vendor_doc_result.field_definitions.items())[:20]:
-                                    st.text(f"• {fname}: {fdesc[:80]}...")
-                            else:
-                                st.text("No field definitions automatically extracted")
-                    else:
-                        st.warning(f"Could not process document: {vendor_doc_result.error}")
-
-        if uploaded_file and sourcetype_name:
-            file_content = uploaded_file.read()
-
-            st.markdown("#### 🔍 Log Analysis")
-            with st.spinner("Analyzing log format..."):
-                parser = LogParser()
-                parsed_log = parser.parse_file(file_content, uploaded_file.name)
-
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.metric("Format", parsed_log.format.value.upper())
-            with col2:
-                st.metric("Fields", len(parsed_log.fields))
-            with col3:
-                st.metric("Confidence", f"{parsed_log.confidence:.0%}")
-
-            # AI Field Parsing (if enabled)
-            ai_field_result = None
-            if use_ai_field_parsing and st.session_state.ai_client:
-                with st.spinner("Performing AI semantic field analysis..."):
-                    ai_parser = create_ai_field_parser(st.session_state.ai_client)
-
-                    # Get vendor context if available
-                    vendor_context = None
-                    if vendor_doc_result and vendor_doc_result.success:
-                        vendor_loader = create_vendor_doc_loader()
-                        vendor_context = vendor_loader.get_context_for_ai(vendor_doc_result)
-
-                    ai_field_result = ai_parser.analyze_fields(parsed_log, vendor_context)
-
-                    if ai_field_result.success:
-                        st.success("AI field analysis complete")
-
-                        # Show AI-detected info
-                        col_ai1, col_ai2, col_ai3 = st.columns(3)
-                        with col_ai1:
-                            if ai_field_result.log_category:
-                                st.info(f"Category: {ai_field_result.log_category}")
-                        with col_ai2:
-                            if ai_field_result.vendor_detected:
-                                st.info(f"Vendor: {ai_field_result.vendor_detected}")
-                        with col_ai3:
-                            review_count = sum(1 for f in ai_field_result.enriched_fields.values() if f.needs_review)
-                            if review_count > 0:
-                                st.warning(f"Fields need review: {review_count}")
-
-            # Display detected fields with AI enrichment
-            with st.expander("📋 Detected Fields" + (" (AI-Enhanced)" if ai_field_result else "")):
-                if ai_field_result and ai_field_result.success:
-                    # Show enhanced field table
-                    st.markdown("| Field | Category | Suggested CIM | Type |")
-                    st.markdown("|-------|----------|---------------|------|")
-                    for name, values in list(parsed_log.fields.items())[:20]:
-                        enriched = ai_field_result.enriched_fields.get(name)
-                        if enriched:
-                            category = enriched.semantic_category
-                            cim_field = enriched.suggested_cim_field or "-"
-                            map_type = enriched.mapping_type or "-"
-                            flag = " (!)" if enriched.needs_review else ""
-                            st.markdown(f"| `{name}`{flag} | {category} | {cim_field} | {map_type} |")
-                        else:
-                            sample = ', '.join(str(v) for v in list(set(values))[:2])
-                            st.markdown(f"| `{name}` | - | - | - |")
-                else:
-                    for name, values in list(parsed_log.fields.items())[:15]:
-                        st.text(f"• {name}: {', '.join(str(v) for v in list(set(values))[:3])}")
-
-            with st.expander("📄 Sample Events"):
-                for event in parsed_log.sample_events[:3]:
-                    st.code(event)
-
-            st.markdown("---")
-
-            if not st.session_state.ai_client:
-                st.warning("Configure AI provider in AI Setup tab first.")
-            else:
-                if st.button("Generate CIM Mappings", type="primary", use_container_width=True):
-                    with st.spinner("Initializing CIM knowledge base..."):
-                        import os
-                        base_dir = os.path.dirname(os.path.abspath(__file__))
-                        knowledge_dir = os.path.join(base_dir, "data", "cim_knowledge")
-                        db_dir = os.path.join(base_dir, "data", "vector_db")
-
-                        try:
-                            vector_store = initialize_vector_store(knowledge_dir, db_dir)
-                            if vector_store.available:
-                                stats = vector_store.get_stats()
-                                st.info(f"Loaded {stats['total_fields']} CIM fields")
-                        except Exception as e:
-                            st.error(f"Failed to init: {e}")
-                            vector_store = None
-
-                    if vector_store:
-                        with st.spinner("Generating CIM mappings with AI analysis..."):
-                            try:
-                                mapping_chain = create_mapping_chain(vector_store, st.session_state.ai_client)
-
-                                # Get vendor context for mapping
-                                vendor_context_for_mapping = None
-                                if vendor_doc_result and vendor_doc_result.success:
-                                    vendor_loader = create_vendor_doc_loader()
-                                    vendor_context_for_mapping = vendor_loader.get_context_for_ai(vendor_doc_result)
-
-                                # Call analyze with enhanced parameters
-                                result = mapping_chain.analyze(
-                                    parsed_log,
-                                    ai_field_result=ai_field_result if use_ai_field_parsing else None,
-                                    vendor_doc_content=vendor_context_for_mapping
-                                )
-
-                                if result['success']:
-                                    st.success("CIM Mapping Generated!")
-
-                                    # Show enhancement badges
-                                    if result.get('ai_field_analysis_used') or result.get('vendor_docs_used'):
-                                        badges = []
-                                        if result.get('ai_field_analysis_used'):
-                                            badges.append("AI Field Analysis")
-                                        if result.get('vendor_docs_used'):
-                                            badges.append("Vendor Docs")
-                                        st.caption(f"Enhanced with: {', '.join(badges)}")
-
-                                    col1, col2, col3 = st.columns(3)
-                                    with col1:
-                                        st.metric("Data Model", result.get('data_model', 'Unknown'))
-                                    with col2:
-                                        st.metric("Dataset", result.get('dataset', 'Unknown'))
-                                    with col3:
-                                        st.metric("Confidence", f"{result.get('confidence', 0):.0%}")
-
-                                    # Generate outputs
-                                    output_gen = OutputGenerator(selected_mode)
-                                    outputs = output_gen.generate_output(result, sourcetype_name)
-
-                                    if 'gui_instructions' in outputs:
-                                        with st.expander("GUI Instructions", expanded=True):
-                                            st.markdown(outputs['gui_instructions'])
-                                        st.download_button("Download GUI Instructions", outputs['gui_instructions'],
-                                                         file_name=f"{sourcetype_name}_gui.md", mime="text/markdown")
-
-                                    if 'props_conf' in outputs:
-                                        with st.expander("Config Files"):
-                                            st.code(outputs['props_conf'], language="ini")
-                                        st.download_button("Download props.conf", outputs['props_conf'],
-                                                         file_name=f"{sourcetype_name}_props.conf", mime="text/plain")
-
-                                    with st.expander("Validation SPL"):
-                                        st.markdown(outputs['validation_spl'])
-
-                                    with st.expander("Raw AI Output"):
-                                        st.markdown(result['mapping'])
-                                else:
-                                    st.error(f"Mapping failed: {result.get('error')}")
-                            except Exception as e:
-                                st.error(f"Error: {e}")
-        else:
-            st.markdown("""
-            **How CIM Mapping Works:**
-            1. Upload a sample log file
-            2. AI detects format and extracts fields
-            3. **(New)** AI performs semantic field analysis for better understanding
-            4. **(New)** Optional vendor documentation improves accuracy
-            5. Fields are mapped to CIM data models
-            6. Get ready-to-use config files
-
-            **AI-Enhanced Features:**
-            - **AI Field Parsing**: Understands field semantics beyond pattern matching
-            - **Vendor Documentation**: Upload PDF/MD/TXT docs for vendor-specific field meanings
-            - **Improved Accuracy**: Better handling of vendor-specific naming conventions
-
-            **Supported Data Models:** Authentication, Network_Traffic, Web, Change, Endpoint,
-            Malware, Email, Intrusion_Detection, Network_Resolution, Alerts, Databases
-            """)
-
-# Tab 5: AI Chat
-with tab5:
     st.markdown("### 💬 Ask Questions About This Integration")
     
     if st.session_state.ai_client:
@@ -522,10 +245,10 @@ with tab5:
     else:
         st.warning("⚠️ Configure an AI provider in the **AI Setup** tab.")
 
-# Tab 6: AI Setup
-with tab6:
+# Tab 5: AI Setup
+with tab5:
     st.markdown("### ⚙️ AI Provider Configuration")
-    st.markdown("Configure an AI provider for chat and CIM mapper. **Free options available!**")
+    st.markdown("Configure an AI provider for chat. **Free options available!**")
     st.markdown("---")
     
     providers = AIClientFactory.get_available_providers()
@@ -587,6 +310,7 @@ with tab6:
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #888;">
-    <p>SIEM Onboarding Assistant v1.2 | Includes CIM Mapper | Free AI Support (Groq, HuggingFace)</p>
+    <p>SIEM Onboarding Assistant v1.0 | Free AI Support (Groq, HuggingFace)</p>
 </div>
 """, unsafe_allow_html=True)
+```
