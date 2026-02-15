@@ -3,21 +3,13 @@ Utility modules for SIEM Onboarding Assistant.
 """
 
 from .kb_loader import KBLoader
-from .ai_client import AIClientFactory, ClaudeClient, GroqClient, HuggingFaceClient, OllamaClient
+from .claude_client import ClaudeClient
 from .usecase_loader import UseCaseLoader
-from .use_case_cache import UseCaseCache
-from .github_use_case_fetcher import GitHubUseCaseFetcher
-from .use_case_parser import UseCaseParser
+from .splunk_public_usecase_loader import SplunkPublicUseCaseLoader
 
 __all__ = [
     'KBLoader', 
-    'AIClientFactory', 
     'ClaudeClient', 
-    'GroqClient', 
-    'HuggingFaceClient', 
-    'OllamaClient', 
     'UseCaseLoader',
-    'UseCaseCache',
-    'GitHubUseCaseFetcher',
-    'UseCaseParser'
+    'SplunkPublicUseCaseLoader'
 ]
