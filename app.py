@@ -3,7 +3,9 @@ import json
 from utils.kb_loader import KBLoader
 from utils.claude_client import ClaudeClient
 from utils.usecase_loader import UseCaseLoader
-from utils.splunk_usecase_downloader import UseCaseDownloader
+from utils.use_case_cache import UseCaseCache
+from utils.github_use_case_fetcher import GitHubUseCaseFetcher
+from utils.use_case_parser import UseCaseParser
 
 st.set_page_config(
     page_title="SIEM Log Source Onboarding Assistant",
@@ -13,6 +15,7 @@ st.set_page_config(
 
 kb_loader = KBLoader()
 usecase_loader = UseCaseLoader()
+cache_manager = UseCaseCache()
 
 LOG_SOURCE_DISPLAY_NAMES = {
     "palo_alto": "Palo Alto Firewall",
@@ -31,6 +34,30 @@ def get_display_name(slug):
     return LOG_SOURCE_DISPLAY_NAMES.get(slug, slug.replace("_", " ").title())
 
 st.sidebar.title("🔒 SIEM Assistant")
+st.sidebar.markdown("---")
+
+try:
+    api_key = st.secrets["ANTHROPIC_API_KEY"]
+    has_api_key = True
+except:
+    api_key = None
+    has_api_key = False
+
+st.sidebar.header("⚙️ Settings")
+
+if has_api_key:
+    st.sidebar.success("🔐 Claude API: Connected ✓")
+    
+    test_mode = st.sidebar.checkbox(
+        "🧪 Test Mode",
+        value=False,
+        help="Download only 3 random use cases for testing"
+    )
+else:
+    st.sidebar.warning("🔐 Claude API: Not configured")
+    st.sidebar.caption("Chat and Use Case downloads disabled")
+    test_mode = False
+
 st.sidebar.markdown("---")
 
 available_sources = kb_loader.get_available_sources()
@@ -107,44 +134,29 @@ with tab2:
 with tab3:
     st.header("Chat with Claude")
     
-    try:
-        api_key = st.secrets["ANTHROPIC_API_KEY"]
-    except:
-        st.error("⚠️ Claude API key not configured.")
-        st.info("""
-        **To enable chat:**
-        1. Add your Anthropic API key to Streamlit secrets
-        2. For local development: Create `.streamlit/secrets.toml`
-        3. For Streamlit Cloud: Add to app secrets in dashboard
+    if has_api_key:
+        if "messages" not in st.session_state:
+            st.session_state.messages = []
         
-        ```toml
-        ANTHROPIC_API_KEY = "sk-ant-..."
-        ```
-        """)
-        st.stop()
-    
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-    
-    if "current_source" not in st.session_state:
-        st.session_state.current_source = selected_source
-    
-    if st.session_state.current_source != selected_source:
-        st.session_state.messages = []
-        st.session_state.current_source = selected_source
-    
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
-    
-    if prompt := st.chat_input("Ask a question about this log source..."):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
+        if "current_source" not in st.session_state:
+            st.session_state.current_source = selected_source
         
-        kb_content = kb_loader.load_kb_content(selected_source)
+        if st.session_state.current_source != selected_source:
+            st.session_state.messages = []
+            st.session_state.current_source = selected_source
         
-        system_prompt = f"""You are a SIEM/Splunk integration assistant specializing in log source onboarding.
+        for message in st.session_state.messages:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
+        
+        if prompt := st.chat_input("Ask a question about this log source..."):
+            st.session_state.messages.append({"role": "user", "content": prompt})
+            with st.chat_message("user"):
+                st.markdown(prompt)
+            
+            kb_content = kb_loader.load_kb_content(selected_source)
+            
+            system_prompt = f"""You are a SIEM/Splunk integration assistant specializing in log source onboarding.
 
 You are currently helping with: {get_display_name(selected_source)}
 
@@ -159,128 +171,140 @@ Guidelines:
 - Focus on Splunk integration best practices
 - Keep responses concise and actionable
 """
+            
+            messages = []
+            for msg in st.session_state.messages:
+                messages.append({
+                    "role": msg["role"],
+                    "content": msg["content"]
+                })
+            
+            with st.chat_message("assistant"):
+                with st.spinner("Thinking..."):
+                    try:
+                        claude = ClaudeClient(api_key)
+                        response_data = claude.get_response(
+                            question=prompt,
+                            kb_content=kb_content or "",
+                            source_name=get_display_name(selected_source),
+                            chat_history=st.session_state.messages[:-1]
+                        )
+                        
+                        if response_data["success"]:
+                            st.markdown(response_data["response"])
+                            st.session_state.messages.append({"role": "assistant", "content": response_data["response"]})
+                        else:
+                            st.error(f"Error: {response_data['message']}")
+                    except Exception as e:
+                        st.error(f"Error: {str(e)}")
+    else:
+        st.info("""
+        🔐 **Claude API Required to Ask Questions**
         
-        messages = []
-        for msg in st.session_state.messages:
-            messages.append({
-                "role": msg["role"],
-                "content": msg["content"]
-            })
+        Add API key to `.streamlit/secrets.toml` or Streamlit Cloud secrets to enable chat.
         
-        with st.chat_message("assistant"):
-            with st.spinner("Thinking..."):
-                try:
-                    claude = ClaudeClient(api_key)
-                    response_data = claude.get_response(
-                        question=prompt,
-                        kb_content=kb_content or "",
-                        source_name=get_display_name(selected_source),
-                        chat_history=st.session_state.messages[:-1]
-                    )
-                    
-                    if response_data["success"]:
-                        st.markdown(response_data["response"])
-                        st.session_state.messages.append({"role": "assistant", "content": response_data["response"]})
-                    else:
-                        st.error(f"Error: {response_data['message']}")
-                except Exception as e:
-                    st.error(f"Error: {str(e)}")
+        You can still view cached use cases in the "Splunk Public Use Cases" tab.
+        """)
 
 with tab4:
     st.header("Use Cases")
     
-    # Download button at the top
+    cached_count = cache_manager.get_cached_count()
+    
     col1, col2 = st.columns([3, 1])
     
     with col1:
-        st.subheader("Security Detection Use Cases")
+        st.subheader("Splunk Public Use Cases")
+        if test_mode:
+            st.info("🧪 **TEST MODE**: Will download 3 random use cases")
+        st.metric("Cached Use Cases", cached_count)
     
     with col2:
-        # Initialize show_download if not present
-        if "show_download" not in st.session_state:
-            st.session_state.show_download = False
-        
-        if st.button("🔄 Download Splunk Use Cases", use_container_width=True):
-            st.session_state.show_download = not st.session_state.show_download
-            st.rerun()
-    
-    # Download section - only show if button was clicked
-    if st.session_state.show_download:
-        st.markdown("---")
-        st.subheader("Download Splunk Public Use Cases")
-        
-        try:
-            claude_key = st.secrets.get("ANTHROPIC_API_KEY", "")
-            
-            if not claude_key:
-                st.error("⚠️ Claude API key not configured.")
-                st.info("""
-                **Required secret:**
-                - ANTHROPIC_API_KEY
-                
-                Add to `.streamlit/secrets.toml` or Streamlit Cloud secrets.
-                """)
-            else:
-                downloader = UseCaseDownloader(claude_key)
-                
-                update_info = downloader.check_for_updates()
-                
-                if not update_info.get("needs_update", False):
-                    metadata = downloader._load_sync_metadata()
-                    if metadata:
-                        st.success("✓ Already up to date")
-                        st.info(f"Last synced: {metadata['last_sync_timestamp']}")
-                        st.info(f"Total detections: {metadata['total_detections']}")
-                    
-                    if st.button("Force Re-download"):
-                        # Clear metadata to force re-download
-                        import os
-                        metadata_file = downloader.metadata_file
-                        if metadata_file.exists():
-                            os.remove(metadata_file)
-                        st.rerun()
-                
-                else:
-                    if update_info.get("error"):
-                        st.error(f"Error checking updates: {update_info['error']}")
-                    elif update_info.get("is_first_sync"):
-                        st.info("📦 First-time sync - this will download all use cases from Splunk's security content repository.")
-                        st.warning("Note: This may take 5-10 minutes and will use Claude API credits.")
-                    else:
-                        st.info(f"📦 Updates available:")
-                        st.write(f"- {update_info.get('new_count', 0)} new detections")
-                        st.write(f"- {update_info.get('modified_count', 0)} updated detections")
-                    
-                    if st.button("Start Download", type="primary"):
-                        progress_bar = st.progress(0)
-                        status_text = st.empty()
+        if has_api_key:
+            if st.button("⬇️ Download Use Cases", use_container_width=True):
+                with st.spinner("Fetching from GitHub..."):
+                    try:
+                        fetcher = GitHubUseCaseFetcher()
+                        parser = UseCaseParser(api_key)
                         
-                        def update_progress(current, total, message):
-                            progress = int((current / total) * 100) if total > 0 else 0
-                            progress_bar.progress(progress)
-                            status_text.text(f"{message} ({current}/{total})")
+                        all_files = fetcher.get_all_use_case_files()
+                        downloaded_ids = cache_manager.get_downloaded_ids()
                         
-                        with st.spinner("Processing..."):
-                            result = downloader.download_and_process(progress_callback=update_progress)
-                        
-                        if result["status"] == "success":
-                            st.success("✓ Successfully downloaded and processed use cases!")
-                            if result.get("is_first_sync"):
-                                st.info(f"Total: {result['total_processed']} detections")
-                            else:
-                                st.info(f"Added: {result.get('new_count', 0)}, Updated: {result.get('modified_count', 0)}")
+                        if test_mode:
+                            selected_files = fetcher.select_random_diverse(
+                                all_files, 
+                                count=3, 
+                                exclude_ids=downloaded_ids
+                            )
                             
-                            st.session_state.show_download = False
+                            if len(selected_files) == 0:
+                                st.success("✅ All use cases already downloaded!")
+                            else:
+                                st.info(f"📥 Downloading {len(selected_files)} new use cases...")
+                        else:
+                            selected_files = [f for f in all_files if f["sha"] not in downloaded_ids]
+                            selected_files = selected_files[:100]
+                            
+                            if len(selected_files) == 0:
+                                st.success("✅ All use cases already downloaded!")
+                            else:
+                                st.info(f"📥 Downloading {len(selected_files)} new use cases (batch 1-100)...")
+                        
+                        if len(selected_files) > 0:
+                            progress_bar = st.progress(0)
+                            status_text = st.empty()
+                            
+                            yaml_files = []
+                            for idx, file_info in enumerate(selected_files):
+                                try:
+                                    yaml_content = fetcher.download_yaml_content(file_info["download_url"])
+                                    if yaml_content:
+                                        yaml_files.append({
+                                            "content": yaml_content,
+                                            "path": file_info["path"],
+                                            "sha": file_info["sha"]
+                                        })
+                                    
+                                    progress = int(((idx + 1) / len(selected_files)) * 50)
+                                    progress_bar.progress(progress)
+                                    status_text.text(f"Downloaded {idx + 1}/{len(selected_files)} files...")
+                                except:
+                                    continue
+                            
+                            status_text.text("Processing with Claude...")
+                            
+                            batch_size = 3
+                            all_parsed = []
+                            
+                            for i in range(0, len(yaml_files), batch_size):
+                                batch = yaml_files[i:i+batch_size]
+                                
+                                try:
+                                    parsed = parser.parse_batch(batch)
+                                    all_parsed.extend(parsed)
+                                    
+                                    progress = 50 + int(((i + batch_size) / len(yaml_files)) * 50)
+                                    progress_bar.progress(min(progress, 100))
+                                    status_text.text(f"Parsed {min(i + batch_size, len(yaml_files))}/{len(yaml_files)} files...")
+                                except:
+                                    continue
+                            
+                            for use_case in all_parsed:
+                                cache_manager.add_to_cache(use_case)
+                            
+                            cache_manager.export_to_json()
+                            
+                            progress_bar.progress(100)
+                            st.success(f"✅ Successfully downloaded and cached {len(all_parsed)} use cases!")
                             st.rerun()
-                        elif result["status"] == "error":
-                            st.error(f"Error: {result['message']}")
-        
-        except Exception as e:
-            st.error(f"Error: {str(e)}")
-        
-        st.markdown("---")
+                    
+                    except Exception as e:
+                        st.error(f"Error: {str(e)}")
+        else:
+            st.info("🔐 Add API key to download")
     
-    # Internal Library Use Cases
+    st.markdown("---")
+    
     st.subheader("📚 Internal Library")
     internal_use_cases = usecase_loader.get_use_cases_for_source(selected_source)
     
@@ -308,27 +332,20 @@ with tab4:
     
     st.markdown("---")
     
-    # External Splunk Use Cases - NOW WITH SAME FORMAT AS INTERNAL
-    st.subheader("🌐 Splunk Public Use Cases")
-    use_cases_file = kb_loader.kb_path / f"{selected_source}_usecases.json"
-    if use_cases_file.exists():
-        with open(use_cases_file, 'r', encoding='utf-8') as f:
-            external_use_cases = json.load(f)
-    else:
-        external_use_cases = []
+    st.subheader("🌐 Cached Splunk Use Cases")
+    cached_use_cases = cache_manager.get_for_source(selected_source)
     
-    if external_use_cases:
-        st.success(f"Found **{len(external_use_cases)}** Splunk public use case(s)")
+    if cached_use_cases:
+        st.success(f"Found **{len(cached_use_cases)}** cached use case(s)")
         
-        for idx, uc in enumerate(external_use_cases):
+        for idx, uc in enumerate(cached_use_cases):
             with st.expander(f"**{uc.get('name', 'Unnamed Detection')}** - {uc.get('mitre_technique', 'N/A')}"):
                 st.markdown(f"**MITRE Tactics:** {uc.get('mitre_tactics', 'N/A')}")
                 st.markdown(f"**Description:** {uc.get('description', 'N/A')}")
                 
                 st.markdown("**SPL Query:**")
-                st.code(uc.get('spl_query', 'N/A'), language='spl')
+                st.code(uc.get('spl_query', 'N/A'), language='sql')
                 
-                # SAME FORMAT AS INTERNAL LIBRARY
                 if uc.get('L1_What_It_Detects'):
                     st.markdown("**What It Detects (L1 Guidance):**")
                     st.info(uc['L1_What_It_Detects'])
@@ -338,7 +355,7 @@ with tab4:
                     for step in uc['L1_Validation_Steps']:
                         st.markdown(f"- {step}")
     else:
-        st.info(f"No Splunk public use cases downloaded yet. Click 'Download Splunk Use Cases' above to fetch them.")
+        st.info(f"No cached use cases for {get_display_name(selected_source)}. Click 'Download Use Cases' above to fetch them.")
 
 st.sidebar.markdown("---")
 st.sidebar.caption("SIEM Log Source Onboarding Assistant v1.0")
