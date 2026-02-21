@@ -6,6 +6,7 @@ from utils.usecase_loader import UseCaseLoader
 from utils.splunk_public_usecase_loader import SplunkPublicUseCaseLoader
 from utils.irp_loader import IRPLoader
 from utils.response_plan_generator import ResponsePlanGenerator
+from utils.mermaid_renderer import render_markdown_with_mermaid
 
 st.set_page_config(
     page_title="SIEM Log Source Onboarding Assistant",
@@ -113,7 +114,7 @@ if nav_mode == "🛡️ Incident Response Playbooks":
     irp_content = irp_loader.load_irp_content(selected_irp_key)
     
     if irp_content:
-        st.markdown(irp_content)
+        render_markdown_with_mermaid(irp_content)
     else:
         st.error(f"Playbook file not found: {selected_irp_info['filename']}")
         st.info("Ensure the Playbooks/ directory contains the IRP markdown files.")
