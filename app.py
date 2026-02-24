@@ -259,7 +259,7 @@ else:
             **Free option:** Add `GROQ_API_KEY = "gsk_..."` (get one at console.groq.com)
             """)
 
-    # --- Tab 4: Use Cases (unchanged) ---
+    # --- Tab 4: Use Cases (UPDATED - Removed L1 Guidance and Validation Steps) ---
     with tab4:
         st.header("Use Cases")
         
@@ -278,20 +278,7 @@ else:
                 spl_query = use_case.get('SPL ', use_case.get('SPL', 'N/A'))
                 st.code(spl_query, language='sql')
                 
-                if use_case.get('L1_What_It_Detects'):
-                    st.markdown("**What It Detects (L1 Guidance):**")
-                    st.info(use_case['L1_What_It_Detects'])
-                
-                if use_case.get('L1_Validation_Steps'):
-                    st.markdown("**Validation Steps:**")
-                    steps = use_case['L1_Validation_Steps']
-                    if isinstance(steps, list):
-                        for step in steps:
-                            st.markdown(f"- {step}")
-                    else:
-                        st.markdown(f"- {steps}")
-                
-                # --- Layer 2: Escalation Bridge ---
+                # Escalation Path
                 related_irps = irp_loader.get_irps_for_use_case(use_case)
                 if related_irps:
                     st.markdown("**🛡️ Escalation Path:**")
@@ -334,7 +321,7 @@ else:
             2. Restart the application
             """)
 
-    # --- Tab 5: Response Plans (NEW) ---
+    # --- Tab 5: Response Plans (unchanged) ---
     with tab5:
         st.header("Response Plans")
         st.caption("AI-generated detection-specific runbooks for L1/L2 analysts. Plans are cached after first generation.")
