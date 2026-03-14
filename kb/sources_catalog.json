@@ -25,6 +25,32 @@
     "estimated_eps": "200-2000",
     "icon": "🪟"
   },
+  "sysmon_windows": {
+    "display_name": "Sysmon (Windows)",
+    "category": "Endpoint Telemetry",
+    "vendor": "Microsoft (Sysinternals)",
+    "collection_method": "Agent (UF + Sysmon driver)",
+    "splunk_addon": "Splunk_TA_sysmon",
+    "primary_index": "sysmon",
+    "primary_sourcetype": "XmlWinEventLog:Microsoft-Windows-Sysmon/Operational",
+    "complexity": "Medium",
+    "onboarding_status": "KB Ready",
+    "estimated_eps": "200-5000",
+    "icon": "🔬"
+  },
+  "powershell_scriptblock": {
+    "display_name": "PowerShell Script Block Logging",
+    "category": "Endpoint Telemetry",
+    "vendor": "Microsoft",
+    "collection_method": "Agent (UF + GPO enablement)",
+    "splunk_addon": "Splunk_TA_windows",
+    "primary_index": "win_powershell",
+    "primary_sourcetype": "XmlWinEventLog:Microsoft-Windows-PowerShell/Operational",
+    "complexity": "Medium",
+    "onboarding_status": "KB Ready",
+    "estimated_eps": "50-500",
+    "icon": "⚡"
+  },
   "linux": {
     "display_name": "Linux (Syslog)",
     "category": "Operating System",
