@@ -74,18 +74,186 @@ st.sidebar.markdown("---")
 st.sidebar.header("📍 Navigation")
 nav_mode = st.sidebar.radio(
     "Select View",
-    ["📘 Log Source Onboarding", "🛡️ Incident Response Playbooks"],
+    ["📊 Dashboard", "📘 Log Source Onboarding", "🛡️ Incident Response Playbooks"],
     index=0,
     label_visibility="collapsed"
 )
 
 st.sidebar.markdown("---")
 
+
+# ============================================
+# Helper: Build dashboard coverage data
+# ============================================
+
+def build_dashboard_data():
+    """Build coverage data for all log sources for the dashboard view."""
+    catalog = kb_loader.get_full_catalog()
+    rows = []
+    
+    total_internal_uc = 0
+    total_splunk_uc = 0
+    total_cached_plans = 0
+    sources_with_kb = 0
+    
+    for slug, meta in catalog.items():
+        # KB status
+        has_kb = kb_loader.kb_file_exists(slug)
+        if has_kb:
+            sources_with_kb += 1
+        
+        # Use case counts
+        internal_uc = usecase_loader.get_use_case_count(slug)
+        splunk_uc = splunk_public_loader.get_count_for_source(slug) if splunk_public_loader.is_available() else 0
+        total_uc = internal_uc + splunk_uc
+        total_internal_uc += internal_uc
+        total_splunk_uc += splunk_uc
+        
+        # References status
+        refs = kb_loader.get_references(slug)
+        has_refs = refs["success"]
+        
+        # Cached response plans count for this source
+        cached_plans = 0
+        all_uc_for_source = []
+        int_uc = usecase_loader.get_use_cases_for_source(slug)
+        if int_uc:
+            all_uc_for_source.extend(int_uc)
+        if splunk_public_loader.is_available():
+            spl_uc = splunk_public_loader.get_use_cases_for_source(slug)
+            if spl_uc:
+                all_uc_for_source.extend(spl_uc)
+        for uc in all_uc_for_source:
+            uc_name = uc.get('Use case Name', '')
+            if uc_name and response_plan_gen.get_cached_plan(uc_name):
+                cached_plans += 1
+        total_cached_plans += cached_plans
+        
+        rows.append({
+            "slug": slug,
+            "icon": meta.get("icon", "📦"),
+            "display_name": meta.get("display_name", slug),
+            "category": meta.get("category", "—"),
+            "vendor": meta.get("vendor", "—"),
+            "collection_method": meta.get("collection_method", "—"),
+            "complexity": meta.get("complexity", "—"),
+            "splunk_addon": meta.get("splunk_addon", "—"),
+            "primary_index": meta.get("primary_index", "—"),
+            "primary_sourcetype": meta.get("primary_sourcetype", "—"),
+            "estimated_eps": meta.get("estimated_eps", "—"),
+            "has_kb": has_kb,
+            "has_refs": has_refs,
+            "internal_uc": internal_uc,
+            "splunk_uc": splunk_uc,
+            "total_uc": total_uc,
+            "cached_plans": cached_plans,
+        })
+    
+    irp_catalog = irp_loader.get_available_irps()
+    
+    summary = {
+        "total_sources": len(catalog),
+        "sources_with_kb": sources_with_kb,
+        "total_internal_uc": total_internal_uc,
+        "total_splunk_uc": total_splunk_uc,
+        "total_uc": total_internal_uc + total_splunk_uc,
+        "total_irps": len(irp_catalog),
+        "total_cached_plans": total_cached_plans,
+    }
+    
+    return rows, summary
+
+
+# ============================================
+# View: Dashboard
+# ============================================
+
+if nav_mode == "📊 Dashboard":
+    
+    st.title("📊 SIEM Onboarding Dashboard")
+    st.caption("Coverage overview across all log sources, use cases, and incident response playbooks.")
+    
+    rows, summary = build_dashboard_data()
+    
+    # --- Metric cards ---
+    m1, m2, m3, m4, m5 = st.columns(5)
+    m1.metric("Log Sources", summary["total_sources"], help="Total sources in catalog")
+    m2.metric("KB Guides", summary["sources_with_kb"], help="Sources with markdown KB files")
+    m3.metric("Use Cases", summary["total_uc"], help="Internal + Splunk public use cases")
+    m4.metric("IRPs", summary["total_irps"], help="Incident Response Playbooks")
+    m5.metric("Response Plans", summary["total_cached_plans"], help="Cached AI-generated response plans")
+    
+    st.markdown("---")
+    
+    # --- Summary table ---
+    st.subheader("Log Source Coverage")
+    
+    for row in rows:
+        kb_badge = "✅" if row["has_kb"] else "❌"
+        refs_badge = "✅" if row["has_refs"] else "❌"
+        uc_badge = f"{row['total_uc']}" if row["total_uc"] > 0 else "—"
+        plans_badge = f"{row['cached_plans']}" if row["cached_plans"] > 0 else "—"
+        
+        # Complexity color
+        complexity = row["complexity"]
+        if complexity == "Low":
+            complexity_display = "🟢 Low"
+        elif complexity == "Medium":
+            complexity_display = "🟡 Medium"
+        elif complexity == "High":
+            complexity_display = "🔴 High"
+        else:
+            complexity_display = complexity
+        
+        with st.expander(f"{row['icon']} **{row['display_name']}** — {row['category']}  |  KB: {kb_badge}  |  Use Cases: {uc_badge}  |  Complexity: {complexity_display}"):
+            
+            # Source profile card
+            pc1, pc2 = st.columns(2)
+            
+            with pc1:
+                st.markdown(f"**Vendor:** {row['vendor']}")
+                st.markdown(f"**Category:** {row['category']}")
+                st.markdown(f"**Collection Method:** {row['collection_method']}")
+                st.markdown(f"**Complexity:** {complexity_display}")
+                st.markdown(f"**Estimated EPS:** {row['estimated_eps']}")
+            
+            with pc2:
+                st.markdown(f"**Splunk Add-on:** `{row['splunk_addon']}`")
+                st.markdown(f"**Primary Index:** `{row['primary_index']}`")
+                st.markdown(f"**Primary Sourcetype:** `{row['primary_sourcetype']}`")
+                st.markdown(f"**KB Guide:** {kb_badge}")
+                st.markdown(f"**References:** {refs_badge}")
+            
+            # Coverage stats
+            st.markdown("---")
+            cs1, cs2, cs3 = st.columns(3)
+            cs1.metric("Internal Use Cases", row["internal_uc"])
+            cs2.metric("Splunk Public Use Cases", row["splunk_uc"])
+            cs3.metric("Cached Response Plans", row["cached_plans"])
+    
+    st.markdown("---")
+    
+    # --- IRP coverage summary ---
+    st.subheader("Incident Response Playbook Coverage")
+    
+    irp_catalog = irp_loader.get_available_irps()
+    irp_cols = st.columns(len(irp_catalog))
+    for i, (key, info) in enumerate(irp_catalog.items()):
+        with irp_cols[i]:
+            has_file = irp_loader.load_irp_content(key) is not None
+            status = "✅" if has_file else "❌"
+            st.markdown(f"**{info['icon']} {info['display_name']}**")
+            st.caption(f"Status: {status}")
+    
+    st.markdown("---")
+    st.caption("💡 Select **📘 Log Source Onboarding** in the sidebar to drill into a specific log source.")
+
+
 # ============================================
 # View: Incident Response Playbooks
 # ============================================
 
-if nav_mode == "🛡️ Incident Response Playbooks":
+elif nav_mode == "🛡️ Incident Response Playbooks":
     
     # IRP selector in sidebar
     irp_catalog = irp_loader.get_available_irps()
@@ -146,7 +314,18 @@ else:
     st.sidebar.markdown("- [Configuration](#log-collection-standard)")
     st.sidebar.markdown("- [Validation](#validation-troubleshooting)")
 
-    st.title(f"{get_display_name(selected_source)} - Integration Guide")
+    # --- Source Profile Card (new - borrowed from Sentinel Ninja pattern) ---
+    source_meta = kb_loader.get_source_metadata(selected_source)
+    
+    st.title(f"{source_meta.get('icon', '📦')} {get_display_name(selected_source)}")
+    
+    if source_meta:
+        with st.container():
+            pc1, pc2, pc3, pc4 = st.columns(4)
+            pc1.markdown(f"**Vendor:** {source_meta.get('vendor', '—')}")
+            pc2.markdown(f"**Method:** {source_meta.get('collection_method', '—')}")
+            pc3.markdown(f"**Index:** `{source_meta.get('primary_index', '—')}`")
+            pc4.markdown(f"**Add-on:** `{source_meta.get('splunk_addon', '—')}`")
 
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
         "📖 Integration Guide", 
@@ -441,4 +620,4 @@ else:
                                     st.error(f"Error: {str(e)}")
 
 st.sidebar.markdown("---")
-st.sidebar.caption("SIEM Log Source Onboarding Assistant v1.1")
+st.sidebar.caption("SIEM Log Source Onboarding Assistant v1.2")
