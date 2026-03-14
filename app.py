@@ -23,6 +23,8 @@ response_plan_gen = ResponsePlanGenerator()
 LOG_SOURCE_DISPLAY_NAMES = {
     "palo_alto": "Palo Alto Firewall",
     "windows_events": "Windows Events",
+    "sysmon_windows": "Sysmon (Windows)",
+    "powershell_scriptblock": "PowerShell Script Block Logging",
     "linux": "Linux",
     "azure_ad": "Azure AD (Microsoft Entra ID)",
     "cisco_asa": "Cisco ASA",
@@ -194,18 +196,7 @@ if nav_mode == "📊 Dashboard":
         uc_badge = f"{row['total_uc']}" if row["total_uc"] > 0 else "—"
         plans_badge = f"{row['cached_plans']}" if row["cached_plans"] > 0 else "—"
         
-        # Complexity color
-        complexity = row["complexity"]
-        if complexity == "Low":
-            complexity_display = "🟢 Low"
-        elif complexity == "Medium":
-            complexity_display = "🟡 Medium"
-        elif complexity == "High":
-            complexity_display = "🔴 High"
-        else:
-            complexity_display = complexity
-        
-        with st.expander(f"{row['icon']} **{row['display_name']}** — {row['category']}  |  KB: {kb_badge}  |  Use Cases: {uc_badge}  |  Complexity: {complexity_display}"):
+        with st.expander(f"{row['icon']} **{row['display_name']}** — {row['category']}  |  KB: {kb_badge}  |  Use Cases: {uc_badge}"):
             
             # Source profile card
             pc1, pc2 = st.columns(2)
@@ -214,15 +205,11 @@ if nav_mode == "📊 Dashboard":
                 st.markdown(f"**Vendor:** {row['vendor']}")
                 st.markdown(f"**Category:** {row['category']}")
                 st.markdown(f"**Collection Method:** {row['collection_method']}")
-                st.markdown(f"**Complexity:** {complexity_display}")
-                st.markdown(f"**Estimated EPS:** {row['estimated_eps']}")
             
             with pc2:
                 st.markdown(f"**Splunk Add-on:** `{row['splunk_addon']}`")
                 st.markdown(f"**Primary Index:** `{row['primary_index']}`")
                 st.markdown(f"**Primary Sourcetype:** `{row['primary_sourcetype']}`")
-                st.markdown(f"**KB Guide:** {kb_badge}")
-                st.markdown(f"**References:** {refs_badge}")
             
             # Coverage stats
             st.markdown("---")
@@ -620,4 +607,4 @@ else:
                                     st.error(f"Error: {str(e)}")
 
 st.sidebar.markdown("---")
-st.sidebar.caption("SIEM Log Source Onboarding Assistant v1.2")
+st.sidebar.caption("SIEM Log Source Onboarding Assistant v1.3")
