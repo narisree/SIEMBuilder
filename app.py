@@ -25,6 +25,8 @@ LOG_SOURCE_DISPLAY_NAMES = {
     "windows_events": "Windows Events",
     "sysmon_windows": "Sysmon (Windows)",
     "powershell_scriptblock": "PowerShell Script Block Logging",
+    "aws_cloudtrail": "AWS CloudTrail",
+    "sysmon_linux": "Sysmon for Linux",
     "linux": "Linux",
     "azure_ad": "Azure AD (Microsoft Entra ID)",
     "cisco_asa": "Cisco ASA",
@@ -607,4 +609,4 @@ else:
                                     st.error(f"Error: {str(e)}")
 
 st.sidebar.markdown("---")
-st.sidebar.caption("SIEM Log Source Onboarding Assistant v1.3")
+st.sidebar.caption("SIEM Log Source Onboarding Assistant v1.4")
