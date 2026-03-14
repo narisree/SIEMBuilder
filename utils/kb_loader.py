@@ -1,6 +1,6 @@
 """
 Knowledge Base Loader
-Handles loading and parsing of markdown KB files and references.
+Handles loading and parsing of markdown KB files, references, and source catalog.
 """
 
 import os
@@ -20,15 +20,25 @@ class KBLoader:
         """
         self.kb_path = Path(kb_path)
         self.references_file = self.kb_path / "references.json"
+        self.catalog_file = self.kb_path / "sources_catalog.json"
         self._sources_catalog = self._load_sources_catalog()
     
     def _load_sources_catalog(self) -> Dict:
         """
-        Load the catalog of available log sources.
+        Load the catalog of available log sources from sources_catalog.json.
+        Falls back to a minimal hardcoded catalog if the file is missing.
         Returns a dictionary mapping source slugs to their metadata.
         """
-        # Define the catalog of supported log sources
-        catalog = {
+        # Try loading from JSON file first
+        if self.catalog_file.exists():
+            try:
+                with open(self.catalog_file, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except (json.JSONDecodeError, Exception) as e:
+                print(f"Warning: Failed to load sources_catalog.json: {e}")
+        
+        # Fallback: minimal hardcoded catalog for backward compatibility
+        return {
             "palo_alto": {
                 "display_name": "Palo Alto Firewall",
                 "category": "Firewall",
@@ -80,7 +90,6 @@ class KBLoader:
                 "vendor": "Zscaler"
             }
         }
-        return catalog
     
     def get_available_sources(self) -> List[str]:
         """
@@ -90,6 +99,15 @@ class KBLoader:
             List of source slugs
         """
         return list(self._sources_catalog.keys())
+    
+    def get_full_catalog(self) -> Dict:
+        """
+        Get the complete sources catalog with all metadata.
+        
+        Returns:
+            Dictionary mapping source slugs to their full metadata
+        """
+        return self._sources_catalog.copy()
     
     def load_kb_content(self, source_slug: str) -> str:
         """
