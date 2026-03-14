@@ -10,7 +10,7 @@
     "complexity": "Medium",
     "onboarding_status": "KB Ready",
     "estimated_eps": "500-5000",
-    "icon": "🔥"
+    "icon": "\ud83d\udd25"
   },
   "windows_events": {
     "display_name": "Windows Events",
@@ -23,7 +23,7 @@
     "complexity": "Low",
     "onboarding_status": "KB Ready",
     "estimated_eps": "200-2000",
-    "icon": "🪟"
+    "icon": "\ud83e\ude9f"
   },
   "sysmon_windows": {
     "display_name": "Sysmon (Windows)",
@@ -36,7 +36,7 @@
     "complexity": "Medium",
     "onboarding_status": "KB Ready",
     "estimated_eps": "200-5000",
-    "icon": "🔬"
+    "icon": "\ud83d\udd2c"
   },
   "powershell_scriptblock": {
     "display_name": "PowerShell Script Block Logging",
@@ -49,7 +49,33 @@
     "complexity": "Medium",
     "onboarding_status": "KB Ready",
     "estimated_eps": "50-500",
-    "icon": "⚡"
+    "icon": "\u26a1"
+  },
+  "aws_cloudtrail": {
+    "display_name": "AWS CloudTrail",
+    "category": "Cloud Infrastructure",
+    "vendor": "Amazon Web Services",
+    "collection_method": "API (SQS-Based S3 / CloudTrail Input)",
+    "splunk_addon": "Splunk_TA_aws",
+    "primary_index": "aws_cloudtrail",
+    "primary_sourcetype": "aws:cloudtrail",
+    "complexity": "High",
+    "onboarding_status": "KB Ready",
+    "estimated_eps": "100-2000",
+    "icon": "\u2601\ufe0f"
+  },
+  "sysmon_linux": {
+    "display_name": "Sysmon for Linux",
+    "category": "Endpoint Telemetry",
+    "vendor": "Microsoft (Sysinternals)",
+    "collection_method": "Agent (UF + Sysmon eBPF)",
+    "splunk_addon": "Splunk_TA_sysmon-for-linux",
+    "primary_index": "sysmon_linux",
+    "primary_sourcetype": "sysmon:linux",
+    "complexity": "Medium",
+    "onboarding_status": "KB Ready",
+    "estimated_eps": "100-2000",
+    "icon": "\ud83d\udd0d"
   },
   "linux": {
     "display_name": "Linux (Syslog)",
@@ -62,7 +88,7 @@
     "complexity": "Low",
     "onboarding_status": "KB Ready",
     "estimated_eps": "100-1000",
-    "icon": "🐧"
+    "icon": "\ud83d\udc27"
   },
   "azure_ad": {
     "display_name": "Azure AD (Microsoft Entra ID)",
@@ -75,7 +101,7 @@
     "complexity": "High",
     "onboarding_status": "KB Ready",
     "estimated_eps": "100-500",
-    "icon": "🔑"
+    "icon": "\ud83d\udd11"
   },
   "cisco_asa": {
     "display_name": "Cisco ASA",
@@ -88,7 +114,7 @@
     "complexity": "Medium",
     "onboarding_status": "KB Ready",
     "estimated_eps": "500-5000",
-    "icon": "🛡️"
+    "icon": "\ud83d\udee1\ufe0f"
   },
   "checkpoint": {
     "display_name": "Check Point Firewall",
@@ -101,7 +127,7 @@
     "complexity": "High",
     "onboarding_status": "KB Ready",
     "estimated_eps": "500-3000",
-    "icon": "🏰"
+    "icon": "\ud83c\udff0"
   },
   "crowdstrike_edr": {
     "display_name": "CrowdStrike EDR",
@@ -114,7 +140,7 @@
     "complexity": "Medium",
     "onboarding_status": "KB Ready",
     "estimated_eps": "200-2000",
-    "icon": "🦅"
+    "icon": "\ud83e\udd85"
   },
   "o365": {
     "display_name": "Office 365 (Microsoft 365)",
@@ -127,7 +153,7 @@
     "complexity": "Medium",
     "onboarding_status": "KB Ready",
     "estimated_eps": "50-500",
-    "icon": "☁️"
+    "icon": "\u2601\ufe0f"
   },
   "proofpoint": {
     "display_name": "Proofpoint",
@@ -140,7 +166,7 @@
     "complexity": "Medium",
     "onboarding_status": "KB Ready",
     "estimated_eps": "100-1000",
-    "icon": "📧"
+    "icon": "\ud83d\udce7"
   },
   "zscaler_proxy": {
     "display_name": "Zscaler Proxy",
@@ -153,6 +179,6 @@
     "complexity": "Medium",
     "onboarding_status": "KB Ready",
     "estimated_eps": "1000-10000",
-    "icon": "🌐"
+    "icon": "\ud83c\udf10"
   }
 }
