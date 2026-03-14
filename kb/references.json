@@ -413,5 +413,81 @@
         "url": "https://github.com/splunk/attack_range"
       }
     ]
+  },
+  "okta": {
+    "official_docs": [
+      {
+        "title": "Splunk Add-on for Okta Identity Cloud - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/6553"
+      },
+      {
+        "title": "Splunk Add-on for Okta Identity Cloud - Documentation",
+        "url": "https://splunk.github.io/splunk-add-on-for-okta-identity-cloud/"
+      },
+      {
+        "title": "Okta System Log API Documentation",
+        "url": "https://developer.okta.com/docs/reference/api/system-log/"
+      },
+      {
+        "title": "Okta + Splunk Enterprise Integration Page",
+        "url": "https://www.okta.com/integrations/splunk-enterprise/"
+      }
+    ],
+    "youtube": [
+      {
+        "title": "Okta + Splunk Integration Tutorial (Search)",
+        "url": "https://www.youtube.com/results?search_query=okta+splunk+integration+tutorial"
+      }
+    ],
+    "blogs_optional": [
+      {
+        "title": "Getting Okta Data into Splunk - Splunk Lantern",
+        "url": "https://lantern.splunk.com/Platform_Data_Management/Unlock_Insights/Getting_Okta_data_into_the_Splunk_platform"
+      },
+      {
+        "title": "Getting Okta Data into Splunk - Somerford Associates",
+        "url": "https://www.somerfordassociates.com/blog/getting-okta-data-into-splunk/"
+      },
+      {
+        "title": "Okta & Splunk Integration Guide - SOC Prime",
+        "url": "https://socprime.com/blog/okta-splunk-integration-guide/"
+      }
+    ]
+  },
+  "cisco_ftd": {
+    "official_docs": [
+      {
+        "title": "Cisco Security Cloud App for Splunk - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/7404"
+      },
+      {
+        "title": "Cisco Secure Firewall App for Splunk - User Guide",
+        "url": "https://www.cisco.com/c/en/us/td/docs/security/firepower/splunk/Cisco_Firepower_App_for_Splunk_User_Guide.html"
+      },
+      {
+        "title": "Create Custom Dashboards on Splunk using FTD Syslogs - Cisco Docs",
+        "url": "https://www.cisco.com/c/en/us/support/docs/security/secure-firewall-threat-defense-virtual/223292-create-custom-dashboards-and-alerts-on.html"
+      }
+    ],
+    "youtube": [
+      {
+        "title": "Cisco FTD Splunk Integration Tutorial (Search)",
+        "url": "https://www.youtube.com/results?search_query=cisco+ftd+firepower+splunk+integration"
+      }
+    ],
+    "blogs_optional": [
+      {
+        "title": "Securing the Network Edge: Cisco FTD Detections for Splunk - Splunk Blog",
+        "url": "https://www.splunk.com/en_us/blog/security/securing-network-edge-cisco-ftd-splunk-detections.html"
+      },
+      {
+        "title": "Unlock Advanced Threat Detection: Cisco Firepower and Splunk - Splunk Blog",
+        "url": "https://www.splunk.com/en_us/blog/industries/unlock-advanced-threat-detection-cisco-firepower-and-splunk.html"
+      },
+      {
+        "title": "How to Configure Log Sending from Cisco Firepower to Splunk - UnderDefense",
+        "url": "https://underdefense.com/guides/how-to-configure-log-sending-from-cisco-firepower-to-splunk/"
+      }
+    ]
   }
 }
