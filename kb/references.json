@@ -1,155 +1,417 @@
 {
   "palo_alto": {
     "official_docs": [
-      {"title": "Splunk Add-on for Palo Alto Networks - Splunkbase", "url": "https://splunkbase.splunk.com/app/2757"},
-      {"title": "Palo Alto Networks - Configure Syslog Monitoring", "url": "https://docs.paloaltonetworks.com/pan-os/11-0/pan-os-admin/monitoring/use-syslog-for-monitoring/configure-syslog-monitoring"},
-      {"title": "Palo Alto Networks - Log Forwarding", "url": "https://docs.paloaltonetworks.com/pan-os/11-0/pan-os-admin/monitoring/configure-log-forwarding"}
+      {
+        "title": "Splunk Add-on for Palo Alto Networks - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/2757"
+      },
+      {
+        "title": "Palo Alto Networks - Configure Syslog Monitoring",
+        "url": "https://docs.paloaltonetworks.com/pan-os/11-0/pan-os-admin/monitoring/use-syslog-for-monitoring/configure-syslog-monitoring"
+      },
+      {
+        "title": "Palo Alto Networks - Log Forwarding",
+        "url": "https://docs.paloaltonetworks.com/pan-os/11-0/pan-os-admin/monitoring/configure-log-forwarding"
+      }
     ],
     "youtube": [
-      {"title": "How to Send Palo Alto Firewall Logs to Splunk", "url": "https://www.youtube.com/watch?v=53PUy4zhG8Q"},
-      {"title": "Palo Alto Log Forwarding to Syslog Server", "url": "https://www.youtube.com/watch?v=LNL5qEBakKM"}
+      {
+        "title": "How to Send Palo Alto Firewall Logs to Splunk",
+        "url": "https://www.youtube.com/watch?v=53PUy4zhG8Q"
+      },
+      {
+        "title": "Palo Alto Log Forwarding to Syslog Server",
+        "url": "https://www.youtube.com/watch?v=LNL5qEBakKM"
+      }
     ],
     "blogs_optional": [
-      {"title": "Palo Alto Splunk Universal Forwarder Documentation", "url": "https://pan.dev/splunk/docs/universal-forwarder/"}
+      {
+        "title": "Palo Alto Splunk Universal Forwarder Documentation",
+        "url": "https://pan.dev/splunk/docs/universal-forwarder/"
+      }
     ]
   },
   "windows_events": {
     "official_docs": [
-      {"title": "Splunk Add-on for Windows - Splunkbase", "url": "https://splunkbase.splunk.com/app/742"},
-      {"title": "Install the Universal Forwarder on Windows", "url": "https://docs.splunk.com/Documentation/Forwarder/latest/Forwarder/InstallaWindowsuniversalforwarderfromaninstaller"},
-      {"title": "Monitor Windows Event Logs", "url": "https://docs.splunk.com/Documentation/Splunk/latest/Data/MonitorWindowseventlogdata"}
+      {
+        "title": "Splunk Add-on for Windows - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/742"
+      },
+      {
+        "title": "Install the Universal Forwarder on Windows",
+        "url": "https://docs.splunk.com/Documentation/Forwarder/latest/Forwarder/InstallaWindowsuniversalforwarderfromaninstaller"
+      },
+      {
+        "title": "Monitor Windows Event Logs",
+        "url": "https://docs.splunk.com/Documentation/Splunk/latest/Data/MonitorWindowseventlogdata"
+      }
     ],
     "youtube": [
-      {"title": "Installing Splunk Universal Forwarder on Windows", "url": "https://www.youtube.com/watch?v=splunk-uf-windows"},
-      {"title": "Windows Event Log Collection with Splunk", "url": "https://www.youtube.com/watch?v=windows-splunk-events"}
+      {
+        "title": "Installing Splunk Universal Forwarder on Windows",
+        "url": "https://www.youtube.com/watch?v=splunk-uf-windows"
+      },
+      {
+        "title": "Windows Event Log Collection with Splunk",
+        "url": "https://www.youtube.com/watch?v=windows-splunk-events"
+      }
     ],
     "blogs_optional": [
-      {"title": "Windows Security Event Log Best Practices", "url": "https://community.splunk.com/t5/All-Apps-and-Add-ons/bd-p/all-apps"}
+      {
+        "title": "Windows Security Event Log Best Practices",
+        "url": "https://community.splunk.com/t5/All-Apps-and-Add-ons/bd-p/all-apps"
+      }
     ]
   },
   "sysmon_windows": {
     "official_docs": [
-      {"title": "Splunk Add-on for Sysmon - Splunkbase", "url": "https://splunkbase.splunk.com/app/5709"},
-      {"title": "Splunk Add-on for Sysmon - Documentation", "url": "https://splunk.github.io/splunk-add-on-for-microsoft-sysmon/"},
-      {"title": "Microsoft Sysmon - Sysinternals Download", "url": "https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon"},
-      {"title": "Splunk Docs - Sysmon Integration Guide", "url": "https://help.splunk.com/en/splunk-enterprise/get-data-in/integrate-data-with-splunk-supported-add-ons/sysmon"}
+      {
+        "title": "Splunk Add-on for Sysmon - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/5709"
+      },
+      {
+        "title": "Splunk Add-on for Sysmon - Documentation",
+        "url": "https://splunk.github.io/splunk-add-on-for-microsoft-sysmon/"
+      },
+      {
+        "title": "Microsoft Sysmon - Sysinternals Download",
+        "url": "https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon"
+      },
+      {
+        "title": "Splunk Docs - Sysmon Integration Guide",
+        "url": "https://help.splunk.com/en/splunk-enterprise/get-data-in/integrate-data-with-splunk-supported-add-ons/sysmon"
+      }
     ],
     "youtube": [
-      {"title": "How I Set Up Sysmon and Splunk (Step-by-Step Guide)", "url": "https://medium.com/@s.udithragav/how-i-set-up-sysmon-and-splunk-without-losing-my-sanity-f151357bcfbf"},
-      {"title": "Sysmon to Splunk Lab Tutorial", "url": "https://github.com/ZomDr0p/Splunk"}
+      {
+        "title": "How I Set Up Sysmon and Splunk (Step-by-Step Guide)",
+        "url": "https://medium.com/@s.udithragav/how-i-set-up-sysmon-and-splunk-without-losing-my-sanity-f151357bcfbf"
+      },
+      {
+        "title": "Sysmon to Splunk Lab Tutorial",
+        "url": "https://github.com/ZomDr0p/Splunk"
+      }
     ],
     "blogs_optional": [
-      {"title": "Splunking with Sysmon Part 1: The Setup - Hurricane Labs", "url": "https://hurricanelabs.com/splunk-tutorials/splunking-with-sysmon-series-part-1-the-setup/"},
-      {"title": "Splunking with Sysmon Part 2: Tuning - Hurricane Labs", "url": "https://hurricanelabs.com/splunk-tutorials/splunking-with-sysmon-series-part-2-tuning/"},
-      {"title": "SwiftOnSecurity Sysmon Configuration (GitHub)", "url": "https://github.com/SwiftOnSecurity/sysmon-config"},
-      {"title": "Olaf Hartong Modular Sysmon Configuration (GitHub)", "url": "https://github.com/olafhartong/sysmon-modular"}
+      {
+        "title": "Splunking with Sysmon Part 1: The Setup - Hurricane Labs",
+        "url": "https://hurricanelabs.com/splunk-tutorials/splunking-with-sysmon-series-part-1-the-setup/"
+      },
+      {
+        "title": "Splunking with Sysmon Part 2: Tuning - Hurricane Labs",
+        "url": "https://hurricanelabs.com/splunk-tutorials/splunking-with-sysmon-series-part-2-tuning/"
+      },
+      {
+        "title": "SwiftOnSecurity Sysmon Configuration (GitHub)",
+        "url": "https://github.com/SwiftOnSecurity/sysmon-config"
+      },
+      {
+        "title": "Olaf Hartong Modular Sysmon Configuration (GitHub)",
+        "url": "https://github.com/olafhartong/sysmon-modular"
+      }
     ]
   },
   "powershell_scriptblock": {
     "official_docs": [
-      {"title": "Splunk Add-on for Windows - Splunkbase", "url": "https://splunkbase.splunk.com/app/742"},
-      {"title": "Configure PowerShell Logging for Splunk UBA", "url": "https://docs.splunk.com/Documentation/UBA/latest/GetDataIn/AddPowerShell"},
-      {"title": "Microsoft - About Logging Windows (PowerShell Docs)", "url": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_logging_windows"},
-      {"title": "Splunk Data Source: PowerShell Script Block Logging 4104", "url": "https://research.splunk.com/sources/5cfd0c72-d989-47a0-92f9-6edc6f8d3564/"}
+      {
+        "title": "Splunk Add-on for Windows - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/742"
+      },
+      {
+        "title": "Configure PowerShell Logging for Splunk UBA",
+        "url": "https://docs.splunk.com/Documentation/UBA/latest/GetDataIn/AddPowerShell"
+      },
+      {
+        "title": "Microsoft - About Logging Windows (PowerShell Docs)",
+        "url": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_logging_windows"
+      },
+      {
+        "title": "Splunk Data Source: PowerShell Script Block Logging 4104",
+        "url": "https://research.splunk.com/sources/5cfd0c72-d989-47a0-92f9-6edc6f8d3564/"
+      }
     ],
     "youtube": [
-      {"title": "PowerShell Script Block Logging + Splunk (Search)", "url": "https://www.youtube.com/results?search_query=powershell+script+block+logging+splunk"}
+      {
+        "title": "PowerShell Script Block Logging + Splunk (Search)",
+        "url": "https://www.youtube.com/results?search_query=powershell+script+block+logging+splunk"
+      }
     ],
     "blogs_optional": [
-      {"title": "Hunting for Malicious PowerShell using Script Block Logging - Splunk Blog", "url": "https://www.splunk.com/en_us/blog/security/hunting-for-malicious-powershell-using-script-block-logging.html"},
-      {"title": "PowerShell Transcription Logs in Splunk - Hurricane Labs", "url": "https://hurricanelabs.com/splunk-tutorials/how-to-use-powershell-transcription-logs-in-splunk/"},
-      {"title": "Splunking Windows PowerShell Commands - Splunk Blog", "url": "https://www.splunk.com/en_us/blog/tips-and-tricks/splunking-windows-powershell-commands.html"},
-      {"title": "Investigating PowerShell Command and Script Logging - CrowdStrike Blog", "url": "https://www.crowdstrike.com/blog/investigating-powershell-command-and-script-logging/"}
+      {
+        "title": "Hunting for Malicious PowerShell using Script Block Logging - Splunk Blog",
+        "url": "https://www.splunk.com/en_us/blog/security/hunting-for-malicious-powershell-using-script-block-logging.html"
+      },
+      {
+        "title": "PowerShell Transcription Logs in Splunk - Hurricane Labs",
+        "url": "https://hurricanelabs.com/splunk-tutorials/how-to-use-powershell-transcription-logs-in-splunk/"
+      },
+      {
+        "title": "Splunking Windows PowerShell Commands - Splunk Blog",
+        "url": "https://www.splunk.com/en_us/blog/tips-and-tricks/splunking-windows-powershell-commands.html"
+      },
+      {
+        "title": "Investigating PowerShell Command and Script Logging - CrowdStrike Blog",
+        "url": "https://www.crowdstrike.com/blog/investigating-powershell-command-and-script-logging/"
+      }
     ]
   },
   "linux": {
     "official_docs": [
-      {"title": "Splunk Add-on for Unix and Linux - Splunkbase", "url": "https://splunkbase.splunk.com/app/833"},
-      {"title": "Install Universal Forwarder on Linux", "url": "https://docs.splunk.com/Documentation/Forwarder/latest/Forwarder/Installanixuniversalforwarder"}
+      {
+        "title": "Splunk Add-on for Unix and Linux - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/833"
+      },
+      {
+        "title": "Install Universal Forwarder on Linux",
+        "url": "https://docs.splunk.com/Documentation/Forwarder/latest/Forwarder/Installanixuniversalforwarder"
+      }
     ],
     "youtube": [
-      {"title": "Linux Log Collection with Splunk Universal Forwarder", "url": "https://www.youtube.com/watch?v=linux-splunk-uf"}
+      {
+        "title": "Linux Log Collection with Splunk Universal Forwarder",
+        "url": "https://www.youtube.com/watch?v=linux-splunk-uf"
+      }
     ],
     "blogs_optional": []
   },
   "azure_ad": {
     "official_docs": [
-      {"title": "Splunk Add-on for Microsoft Cloud Services - Splunkbase", "url": "https://splunkbase.splunk.com/app/3110"},
-      {"title": "Microsoft Entra ID Activity Logs", "url": "https://learn.microsoft.com/en-us/entra/identity/monitoring-health/concept-audit-logs"},
-      {"title": "Stream Azure AD logs to SIEM", "url": "https://learn.microsoft.com/en-us/entra/identity/monitoring-health/howto-stream-logs-to-event-hub"}
+      {
+        "title": "Splunk Add-on for Microsoft Cloud Services - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/3110"
+      },
+      {
+        "title": "Microsoft Entra ID Activity Logs",
+        "url": "https://learn.microsoft.com/en-us/entra/identity/monitoring-health/concept-audit-logs"
+      },
+      {
+        "title": "Stream Azure AD logs to SIEM",
+        "url": "https://learn.microsoft.com/en-us/entra/identity/monitoring-health/howto-stream-logs-to-event-hub"
+      }
     ],
     "youtube": [
-      {"title": "Azure AD Integration with Splunk - Step by Step", "url": "https://www.youtube.com/watch?v=azure-ad-splunk"},
-      {"title": "Microsoft Graph API for SIEM Integration", "url": "https://www.youtube.com/watch?v=msgraph-siem"}
+      {
+        "title": "Azure AD Integration with Splunk - Step by Step",
+        "url": "https://www.youtube.com/watch?v=azure-ad-splunk"
+      },
+      {
+        "title": "Microsoft Graph API for SIEM Integration",
+        "url": "https://www.youtube.com/watch?v=msgraph-siem"
+      }
     ],
     "blogs_optional": [
-      {"title": "Azure AD Security Monitoring with Splunk", "url": "https://techcommunity.microsoft.com/t5/security-compliance-and-identity/bg-p/SecurityandComplianceBlog"}
+      {
+        "title": "Azure AD Security Monitoring with Splunk",
+        "url": "https://techcommunity.microsoft.com/t5/security-compliance-and-identity/bg-p/SecurityandComplianceBlog"
+      }
     ]
   },
   "cisco_asa": {
     "official_docs": [
-      {"title": "Splunk Add-on for Cisco ASA - Splunkbase", "url": "https://splunkbase.splunk.com/app/1620"},
-      {"title": "Cisco ASA Syslog Configuration Guide", "url": "https://www.cisco.com/c/en/us/td/docs/security/asa/asa-cli-reference/S/asa-command-ref-S.html"}
+      {
+        "title": "Splunk Add-on for Cisco ASA - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/1620"
+      },
+      {
+        "title": "Cisco ASA Syslog Configuration Guide",
+        "url": "https://www.cisco.com/c/en/us/td/docs/security/asa/asa-cli-reference/S/asa-command-ref-S.html"
+      }
     ],
     "youtube": [
-      {"title": "Cisco ASA Syslog to Splunk Configuration", "url": "https://www.youtube.com/watch?v=cisco-asa-splunk"}
+      {
+        "title": "Cisco ASA Syslog to Splunk Configuration",
+        "url": "https://www.youtube.com/watch?v=cisco-asa-splunk"
+      }
     ],
     "blogs_optional": []
   },
   "checkpoint": {
     "official_docs": [
-      {"title": "Splunk Add-on for Check Point - Splunkbase", "url": "https://splunkbase.splunk.com/app/4293"},
-      {"title": "Check Point Log Exporter Guide", "url": "https://supportcenter.checkpoint.com/supportcenter/portal?eventSubmit_doGoviewsolutiondetails=&solutionid=sk122323"}
+      {
+        "title": "Splunk Add-on for Check Point - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/4293"
+      },
+      {
+        "title": "Check Point Log Exporter Guide",
+        "url": "https://supportcenter.checkpoint.com/supportcenter/portal?eventSubmit_doGoviewsolutiondetails=&solutionid=sk122323"
+      }
     ],
     "youtube": [
-      {"title": "Check Point OPSEC LEA Integration with Splunk", "url": "https://www.youtube.com/watch?v=checkpoint-splunk"}
+      {
+        "title": "Check Point OPSEC LEA Integration with Splunk",
+        "url": "https://www.youtube.com/watch?v=checkpoint-splunk"
+      }
     ],
     "blogs_optional": []
   },
   "crowdstrike_edr": {
     "official_docs": [
-      {"title": "CrowdStrike Falcon Event Streams - Splunkbase", "url": "https://splunkbase.splunk.com/app/5082"},
-      {"title": "CrowdStrike API Documentation", "url": "https://falcon.crowdstrike.com/documentation/page/a2a7fc0e/crowdstrike-falcon-event-streams-api"}
+      {
+        "title": "CrowdStrike Falcon Event Streams - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/5082"
+      },
+      {
+        "title": "CrowdStrike API Documentation",
+        "url": "https://falcon.crowdstrike.com/documentation/page/a2a7fc0e/crowdstrike-falcon-event-streams-api"
+      }
     ],
     "youtube": [
-      {"title": "CrowdStrike Falcon + Splunk Integration", "url": "https://www.youtube.com/watch?v=crowdstrike-splunk"}
+      {
+        "title": "CrowdStrike Falcon + Splunk Integration",
+        "url": "https://www.youtube.com/watch?v=crowdstrike-splunk"
+      }
     ],
     "blogs_optional": [
-      {"title": "CrowdStrike SIEM Integration Best Practices", "url": "https://www.crowdstrike.com/blog/"}
+      {
+        "title": "CrowdStrike SIEM Integration Best Practices",
+        "url": "https://www.crowdstrike.com/blog/"
+      }
     ]
   },
   "o365": {
     "official_docs": [
-      {"title": "Splunk Add-on for Microsoft Office 365 - Splunkbase", "url": "https://splunkbase.splunk.com/app/4055"},
-      {"title": "Microsoft 365 Audit Log Activities", "url": "https://learn.microsoft.com/en-us/purview/audit-log-activities"},
-      {"title": "Office 365 Management Activity API", "url": "https://learn.microsoft.com/en-us/office/office-365-management-api/office-365-management-activity-api-reference"}
+      {
+        "title": "Splunk Add-on for Microsoft Office 365 - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/4055"
+      },
+      {
+        "title": "Microsoft 365 Audit Log Activities",
+        "url": "https://learn.microsoft.com/en-us/purview/audit-log-activities"
+      },
+      {
+        "title": "Office 365 Management Activity API",
+        "url": "https://learn.microsoft.com/en-us/office/office-365-management-api/office-365-management-activity-api-reference"
+      }
     ],
     "youtube": [
-      {"title": "Office 365 Log Collection with Splunk", "url": "https://www.youtube.com/watch?v=o365-splunk-logs"}
+      {
+        "title": "Office 365 Log Collection with Splunk",
+        "url": "https://www.youtube.com/watch?v=o365-splunk-logs"
+      }
     ],
     "blogs_optional": []
   },
   "proofpoint": {
     "official_docs": [
-      {"title": "Splunk Add-on for Proofpoint - Splunkbase", "url": "https://splunkbase.splunk.com/app/3638"},
-      {"title": "Proofpoint TAP SIEM API Documentation", "url": "https://help.proofpoint.com/Threat_Insight_Dashboard/API_Documentation"}
+      {
+        "title": "Splunk Add-on for Proofpoint - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/3638"
+      },
+      {
+        "title": "Proofpoint TAP SIEM API Documentation",
+        "url": "https://help.proofpoint.com/Threat_Insight_Dashboard/API_Documentation"
+      }
     ],
     "youtube": [
-      {"title": "Proofpoint Email Security + Splunk Integration", "url": "https://www.youtube.com/watch?v=proofpoint-splunk"}
+      {
+        "title": "Proofpoint Email Security + Splunk Integration",
+        "url": "https://www.youtube.com/watch?v=proofpoint-splunk"
+      }
     ],
     "blogs_optional": []
   },
   "zscaler_proxy": {
     "official_docs": [
-      {"title": "Splunk Add-on for Zscaler - Splunkbase", "url": "https://splunkbase.splunk.com/app/3865"},
-      {"title": "Zscaler NSS Configuration Guide", "url": "https://help.zscaler.com/zia/nss-feed-output-format-web-logs"},
-      {"title": "Zscaler Cloud NSS Documentation", "url": "https://help.zscaler.com/zia/about-cloud-nss"}
+      {
+        "title": "Splunk Add-on for Zscaler - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/3865"
+      },
+      {
+        "title": "Zscaler NSS Configuration Guide",
+        "url": "https://help.zscaler.com/zia/nss-feed-output-format-web-logs"
+      },
+      {
+        "title": "Zscaler Cloud NSS Documentation",
+        "url": "https://help.zscaler.com/zia/about-cloud-nss"
+      }
     ],
     "youtube": [
-      {"title": "Zscaler ZIA Integration with Splunk SIEM", "url": "https://www.youtube.com/watch?v=zscaler-splunk"}
+      {
+        "title": "Zscaler ZIA Integration with Splunk SIEM",
+        "url": "https://www.youtube.com/watch?v=zscaler-splunk"
+      }
     ],
     "blogs_optional": [
-      {"title": "Zscaler + Splunk Security Operations", "url": "https://www.zscaler.com/blogs"}
+      {
+        "title": "Zscaler + Splunk Security Operations",
+        "url": "https://www.zscaler.com/blogs"
+      }
+    ]
+  },
+  "aws_cloudtrail": {
+    "official_docs": [
+      {
+        "title": "Splunk Add-on for AWS - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/1876"
+      },
+      {
+        "title": "Configure CloudTrail Inputs - Splunk Add-on for AWS Docs",
+        "url": "https://splunk.github.io/splunk-add-on-for-amazon-web-services/CloudTrail/"
+      },
+      {
+        "title": "AWS CloudTrail User Guide",
+        "url": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+      },
+      {
+        "title": "Get AWS CloudTrail Data into Splunk Cloud",
+        "url": "https://help.splunk.com/en/data-management/splunk-cloud-platform-admin-manual/9.3.2411/get-data-into-splunk-cloud-platform/get-amazon-web-services-aws-data-into-splunk-cloud-platform"
+      }
+    ],
+    "youtube": [
+      {
+        "title": "AWS CloudTrail to Splunk Integration (Search)",
+        "url": "https://www.youtube.com/results?search_query=AWS+CloudTrail+Splunk+integration+tutorial"
+      }
+    ],
+    "blogs_optional": [
+      {
+        "title": "Splunk Add-on for AWS - Full Documentation",
+        "url": "https://splunk.github.io/splunk-add-on-for-amazon-web-services/"
+      },
+      {
+        "title": "Troubleshoot AWS CloudTrail Data Ingestion - Splunk Docs",
+        "url": "https://help.splunk.com/en/splunk-cloud-platform/ingest-data-from-cloud-services/data-manager-troubleshooting-manual/1.11/troubleshoot-aws-data-ingestion/troubleshoot-aws-cloudtrail-data-ingestion"
+      }
+    ]
+  },
+  "sysmon_linux": {
+    "official_docs": [
+      {
+        "title": "Splunk Add-on for Sysmon for Linux - Splunkbase",
+        "url": "https://classic.splunkbase.splunk.com/app/6652/"
+      },
+      {
+        "title": "Splunk Add-on for Sysmon for Linux - Documentation",
+        "url": "https://docs.splunk.com/Documentation/AddOns/released/NixSysmon/About"
+      },
+      {
+        "title": "Install Splunk Add-on for Sysmon for Linux",
+        "url": "https://docs.splunk.com/Documentation/AddOns/released/NixSysmon/Install"
+      },
+      {
+        "title": "Configure Sysmon for Linux Deployment - Splunk Docs",
+        "url": "https://docs.splunk.com/Documentation/AddOns/released/NixSysmon/ConfigureSysmon"
+      },
+      {
+        "title": "Microsoft SysmonForLinux - GitHub Repository",
+        "url": "https://github.com/Sysinternals/SysmonForLinux"
+      }
+    ],
+    "youtube": [
+      {
+        "title": "Sysmon for Linux Integration with Splunk (Search)",
+        "url": "https://www.youtube.com/results?search_query=sysmon+for+linux+splunk+integration"
+      }
+    ],
+    "blogs_optional": [
+      {
+        "title": "Approaching Linux Post-Exploitation with Splunk Attack Range - Splunk Blog",
+        "url": "https://www.splunk.com/en_us/blog/security/approaching-linux-post-exploitation-with-splunk-attack-range.html"
+      },
+      {
+        "title": "Splunk Attack Range Sysmon Linux Config (GitHub)",
+        "url": "https://github.com/splunk/attack_range"
+      }
     ]
   }
 }
