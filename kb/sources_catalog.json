@@ -77,6 +77,32 @@
     "estimated_eps": "100-2000",
     "icon": "\ud83d\udd0d"
   },
+  "okta": {
+    "display_name": "Okta",
+    "category": "Identity & Access Management",
+    "vendor": "Okta",
+    "collection_method": "API (System Log REST API)",
+    "splunk_addon": "Splunk_TA_okta_identity_cloud",
+    "primary_index": "okta",
+    "primary_sourcetype": "OktaIM2:log",
+    "complexity": "Low",
+    "onboarding_status": "KB Ready",
+    "estimated_eps": "10-200",
+    "icon": "\ud83d\udd10"
+  },
+  "cisco_ftd": {
+    "display_name": "Cisco Secure Firewall (FTD)",
+    "category": "Next-Generation Firewall",
+    "vendor": "Cisco",
+    "collection_method": "Syslog / eStreamer",
+    "splunk_addon": "Cisco_Security_Cloud",
+    "primary_index": "cisco_ftd",
+    "primary_sourcetype": "cisco:ftd",
+    "complexity": "High",
+    "onboarding_status": "KB Ready",
+    "estimated_eps": "500-10000",
+    "icon": "\ud83d\udd25"
+  },
   "linux": {
     "display_name": "Linux (Syslog)",
     "category": "Operating System",
