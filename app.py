@@ -27,6 +27,8 @@ LOG_SOURCE_DISPLAY_NAMES = {
     "powershell_scriptblock": "PowerShell Script Block Logging",
     "aws_cloudtrail": "AWS CloudTrail",
     "sysmon_linux": "Sysmon for Linux",
+    "okta": "Okta",
+    "cisco_ftd": "Cisco Secure Firewall (FTD)",
     "linux": "Linux",
     "azure_ad": "Azure AD (Microsoft Entra ID)",
     "cisco_asa": "Cisco ASA",
@@ -95,10 +97,14 @@ def build_dashboard_data():
     catalog = kb_loader.get_full_catalog()
     rows = []
     
-    total_internal_uc = 0
-    total_splunk_uc = 0
     total_cached_plans = 0
     sources_with_kb = 0
+    
+    # Track unique use case names globally to avoid double-counting
+    # (a use case mapped to Sysmon + Windows + CrowdStrike should count as 1)
+    global_seen_internal = set()
+    global_seen_splunk = set()
+    global_seen_plans = set()
     
     for slug, meta in catalog.items():
         # KB status
@@ -106,12 +112,21 @@ def build_dashboard_data():
         if has_kb:
             sources_with_kb += 1
         
-        # Use case counts
+        # Use case counts (per-source — these are allowed to overlap)
         internal_uc = usecase_loader.get_use_case_count(slug)
         splunk_uc = splunk_public_loader.get_count_for_source(slug) if splunk_public_loader.is_available() else 0
         total_uc = internal_uc + splunk_uc
-        total_internal_uc += internal_uc
-        total_splunk_uc += splunk_uc
+        
+        # Track unique names for global dedup
+        for uc in usecase_loader.get_use_cases_for_source(slug):
+            name = uc.get('Use case Name', '')
+            if name:
+                global_seen_internal.add(name)
+        if splunk_public_loader.is_available():
+            for uc in splunk_public_loader.get_use_cases_for_source(slug):
+                name = uc.get('Use case Name', '')
+                if name:
+                    global_seen_splunk.add(name)
         
         # References status
         refs = kb_loader.get_references(slug)
@@ -131,7 +146,7 @@ def build_dashboard_data():
             uc_name = uc.get('Use case Name', '')
             if uc_name and response_plan_gen.get_cached_plan(uc_name):
                 cached_plans += 1
-        total_cached_plans += cached_plans
+                global_seen_plans.add(uc_name)
         
         rows.append({
             "slug": slug,
@@ -155,14 +170,18 @@ def build_dashboard_data():
     
     irp_catalog = irp_loader.get_available_irps()
     
+    # Use the actual total from the Excel library for the global count
+    # This avoids double-counting use cases that map to multiple sources
+    total_unique_uc = splunk_public_loader.get_total_count() if splunk_public_loader.is_available() else 0
+    # Add internal use cases that aren't already in the splunk library
+    total_unique_uc += len(global_seen_internal - global_seen_splunk)
+    
     summary = {
         "total_sources": len(catalog),
         "sources_with_kb": sources_with_kb,
-        "total_internal_uc": total_internal_uc,
-        "total_splunk_uc": total_splunk_uc,
-        "total_uc": total_internal_uc + total_splunk_uc,
+        "total_uc": total_unique_uc,
         "total_irps": len(irp_catalog),
-        "total_cached_plans": total_cached_plans,
+        "total_cached_plans": len(global_seen_plans),
     }
     
     return rows, summary
@@ -183,7 +202,7 @@ if nav_mode == "📊 Dashboard":
     m1, m2, m3, m4, m5 = st.columns(5)
     m1.metric("Log Sources", summary["total_sources"], help="Total sources in catalog")
     m2.metric("KB Guides", summary["sources_with_kb"], help="Sources with markdown KB files")
-    m3.metric("Use Cases", summary["total_uc"], help="Internal + Splunk public use cases")
+    m3.metric("Use Cases", summary["total_uc"], help="Unique use cases in the library (deduplicated)")
     m4.metric("IRPs", summary["total_irps"], help="Incident Response Playbooks")
     m5.metric("Response Plans", summary["total_cached_plans"], help="Cached AI-generated response plans")
     
@@ -609,4 +628,4 @@ else:
                                     st.error(f"Error: {str(e)}")
 
 st.sidebar.markdown("---")
-st.sidebar.caption("SIEM Log Source Onboarding Assistant v1.4")
+st.sidebar.caption("SIEM Log Source Onboarding Assistant v1.5")
