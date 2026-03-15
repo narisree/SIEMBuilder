@@ -29,6 +29,9 @@ LOG_SOURCE_DISPLAY_NAMES = {
     "sysmon_linux": "Sysmon for Linux",
     "okta": "Okta",
     "cisco_ftd": "Cisco Secure Firewall (FTD)",
+    "suricata": "Suricata IDS",
+    "kubernetes": "Kubernetes",
+    "vmware_esxi": "VMware ESXi",
     "linux": "Linux",
     "azure_ad": "Azure AD (Microsoft Entra ID)",
     "cisco_asa": "Cisco ASA",
@@ -628,4 +631,4 @@ else:
                                     st.error(f"Error: {str(e)}")
 
 st.sidebar.markdown("---")
-st.sidebar.caption("SIEM Log Source Onboarding Assistant v1.5")
+st.sidebar.caption("SIEM Log Source Onboarding Assistant v1.6")
