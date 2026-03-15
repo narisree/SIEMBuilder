@@ -142,6 +142,32 @@
     "estimated_eps": "50-500",
     "icon": "\ud83d\udda5\ufe0f"
   },
+  "github": {
+    "display_name": "GitHub Enterprise",
+    "category": "DevOps / Source Code",
+    "vendor": "GitHub (Microsoft)",
+    "collection_method": "API (Audit Log) / HEC Streaming",
+    "splunk_addon": "Splunk_TA_github",
+    "primary_index": "github",
+    "primary_sourcetype": "github:cloud:audit",
+    "complexity": "Medium",
+    "onboarding_status": "KB Ready",
+    "estimated_eps": "10-200",
+    "icon": "\ud83d\udc19"
+  },
+  "nginx": {
+    "display_name": "Nginx",
+    "category": "Web Server / Reverse Proxy",
+    "vendor": "Nginx Inc. (F5)",
+    "collection_method": "File Monitor (UF) / Syslog",
+    "splunk_addon": "Splunk Add-on for Nginx",
+    "primary_index": "nginx",
+    "primary_sourcetype": "nginx:plus:access",
+    "complexity": "Low",
+    "onboarding_status": "KB Ready",
+    "estimated_eps": "100-5000",
+    "icon": "\ud83c\udf10"
+  },
   "linux": {
     "display_name": "Linux (Syslog)",
     "category": "Operating System",
