@@ -103,6 +103,45 @@
     "estimated_eps": "500-10000",
     "icon": "\ud83d\udd25"
   },
+  "suricata": {
+    "display_name": "Suricata IDS",
+    "category": "Network IDS/IPS",
+    "vendor": "OISF (Open Source)",
+    "collection_method": "File Monitor (EVE JSON) / Syslog",
+    "splunk_addon": "CCX Add-on for Suricata",
+    "primary_index": "suricata",
+    "primary_sourcetype": "suricata",
+    "complexity": "Medium",
+    "onboarding_status": "KB Ready",
+    "estimated_eps": "500-10000",
+    "icon": "\ud83d\udc0a"
+  },
+  "kubernetes": {
+    "display_name": "Kubernetes",
+    "category": "Container Orchestration",
+    "vendor": "CNCF (Open Source)",
+    "collection_method": "OTel Collector / HEC / File Monitor",
+    "splunk_addon": "Splunk OTel Collector for K8s",
+    "primary_index": "kubernetes",
+    "primary_sourcetype": "kube:apiserver-audit",
+    "complexity": "High",
+    "onboarding_status": "KB Ready",
+    "estimated_eps": "200-5000",
+    "icon": "\u2638\ufe0f"
+  },
+  "vmware_esxi": {
+    "display_name": "VMware ESXi",
+    "category": "Hypervisor",
+    "vendor": "VMware (Broadcom)",
+    "collection_method": "Syslog",
+    "splunk_addon": "Splunk Add-on for VMware ESXi",
+    "primary_index": "vmware_esxi",
+    "primary_sourcetype": "vmware:esxi:syslog",
+    "complexity": "Low",
+    "onboarding_status": "KB Ready",
+    "estimated_eps": "50-500",
+    "icon": "\ud83d\udda5\ufe0f"
+  },
   "linux": {
     "display_name": "Linux (Syslog)",
     "category": "Operating System",
