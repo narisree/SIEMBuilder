@@ -32,6 +32,8 @@ LOG_SOURCE_DISPLAY_NAMES = {
     "suricata": "Suricata IDS",
     "kubernetes": "Kubernetes",
     "vmware_esxi": "VMware ESXi",
+    "github": "GitHub Enterprise",
+    "nginx": "Nginx",
     "linux": "Linux",
     "azure_ad": "Azure AD (Microsoft Entra ID)",
     "cisco_asa": "Cisco ASA",
@@ -631,4 +633,4 @@ else:
                                     st.error(f"Error: {str(e)}")
 
 st.sidebar.markdown("---")
-st.sidebar.caption("SIEM Log Source Onboarding Assistant v1.6")
+st.sidebar.caption("SIEM Log Source Onboarding Assistant v1.7")
