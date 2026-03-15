@@ -489,5 +489,97 @@
         "url": "https://underdefense.com/guides/how-to-configure-log-sending-from-cisco-firepower-to-splunk/"
       }
     ]
+  },
+  "suricata": {
+    "official_docs": [
+      {
+        "title": "CCX Add-on for Suricata - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/6994"
+      },
+      {
+        "title": "Suricata Documentation",
+        "url": "https://docs.suricata.io/en/latest/"
+      },
+      {
+        "title": "Stamus Networks App for Splunk - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/5262"
+      }
+    ],
+    "youtube": [
+      {
+        "title": "Suricata IDS + Splunk Integration (Search)",
+        "url": "https://www.youtube.com/results?search_query=suricata+IDS+splunk+integration"
+      }
+    ],
+    "blogs_optional": [
+      {
+        "title": "How to Integrate Suricata with Splunk Using SC4S - Splunk Community",
+        "url": "https://community.splunk.com/t5/Product-News-Announcements/How-SC4S-Makes-Suricata-Logs-Ingestion-Simple/ba-p/750247"
+      },
+      {
+        "title": "pfSense and Suricata in Splunk Guide - Hurricane Labs",
+        "url": "https://hurricanelabs.com/splunk-tutorials/your-all-in-one-guide-to-setting-up-pfsense-and-suricata-in-splunk/"
+      },
+      {
+        "title": "TA-suricata (Community CIM TA) - GitHub",
+        "url": "https://github.com/jorritfolmer/TA-suricata"
+      }
+    ]
+  },
+  "kubernetes": {
+    "official_docs": [
+      {
+        "title": "Kubernetes Auditing Documentation",
+        "url": "https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/"
+      },
+      {
+        "title": "Splunk OpenTelemetry Collector for Kubernetes (Helm)",
+        "url": "https://github.com/signalfx/splunk-otel-collector-chart"
+      },
+      {
+        "title": "Splunk Connect for Kubernetes - GitHub",
+        "url": "https://github.com/splunk/splunk-connect-for-kubernetes"
+      }
+    ],
+    "youtube": [
+      {
+        "title": "Kubernetes Audit Logs to Splunk (Search)",
+        "url": "https://www.youtube.com/results?search_query=kubernetes+audit+logs+splunk+integration"
+      }
+    ],
+    "blogs_optional": [
+      {
+        "title": "Collect Logs and Events with Collector for Kubernetes - Splunk Docs",
+        "url": "https://help.splunk.com/en/splunk-observability-cloud/manage-data/splunk-distribution-of-the-opentelemetry-collector/get-started-with-the-splunk-distribution-of-the-opentelemetry-collector/collector-for-kubernetes/configure-logs-and-events"
+      },
+      {
+        "title": "Monitoring Kubernetes with Splunk - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/3743"
+      }
+    ]
+  },
+  "vmware_esxi": {
+    "official_docs": [
+      {
+        "title": "VMware ESXi Syslog Configuration Guide",
+        "url": "https://docs.vmware.com/en/VMware-vSphere/8.0/vsphere-monitoring/GUID-9F67DB52-F469-451F-B6C8-DAE8D95976E7.html"
+      },
+      {
+        "title": "Splunk Add-on for VMware ESXi - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/5765"
+      }
+    ],
+    "youtube": [
+      {
+        "title": "VMware ESXi Syslog to Splunk (Search)",
+        "url": "https://www.youtube.com/results?search_query=vmware+esxi+syslog+splunk+integration"
+      }
+    ],
+    "blogs_optional": [
+      {
+        "title": "VMware vSphere Monitoring with Splunk",
+        "url": "https://splunkbase.splunk.com/app/3543"
+      }
+    ]
   }
 }
