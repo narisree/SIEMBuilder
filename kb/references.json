@@ -581,5 +581,65 @@
         "url": "https://splunkbase.splunk.com/app/3543"
       }
     ]
+  },
+  "github": {
+    "official_docs": [
+      {
+        "title": "Splunk Add-on for GitHub - Splunkbase",
+        "url": "https://splunkbase.splunk.com/app/6254"
+      },
+      {
+        "title": "Splunk Add-on for GitHub - Documentation",
+        "url": "https://splunk.github.io/splunk-add-on-for-github-audit-log-monitoring/"
+      },
+      {
+        "title": "GitHub Audit Log Streaming to Splunk - GitHub Docs",
+        "url": "https://docs.github.com/en/enterprise-cloud@latest/admin/monitoring-activity-in-your-enterprise/reviewing-audit-logs-for-your-enterprise/streaming-the-audit-log-for-your-enterprise"
+      },
+      {
+        "title": "Splunk Data Source: GitHub Enterprise Audit Logs",
+        "url": "https://research.splunk.com/sources/8a4d656f-8801-4a2c-ae10-553d2696a59f/"
+      }
+    ],
+    "youtube": [
+      {
+        "title": "GitHub Audit Logs to Splunk Integration (Search)",
+        "url": "https://www.youtube.com/results?search_query=github+enterprise+audit+logs+splunk"
+      }
+    ],
+    "blogs_optional": [
+      {
+        "title": "GitHub Audit Log Monitoring Add-On - GitHub Repository",
+        "url": "https://github.com/splunk/github-audit-log-monitoring-add-on-for-splunk"
+      },
+      {
+        "title": "GitHub App for Splunk - GitHub Repository",
+        "url": "https://github.com/splunk/github_app_for_splunk"
+      }
+    ]
+  },
+  "nginx": {
+    "official_docs": [
+      {
+        "title": "Nginx Logging Documentation",
+        "url": "https://nginx.org/en/docs/http/ngx_http_log_module.html"
+      },
+      {
+        "title": "Nginx Core Module - Error Log",
+        "url": "https://nginx.org/en/docs/ngx_core_module.html#error_log"
+      }
+    ],
+    "youtube": [
+      {
+        "title": "Nginx Logs to Splunk Integration (Search)",
+        "url": "https://www.youtube.com/results?search_query=nginx+access+logs+splunk+integration"
+      }
+    ],
+    "blogs_optional": [
+      {
+        "title": "Nginx + Suricata + Splunk Setup Guide - Hurricane Labs",
+        "url": "https://hurricanelabs.com/splunk-tutorials/your-all-in-one-guide-to-setting-up-pfsense-and-suricata-in-splunk/"
+      }
+    ]
   }
 }
