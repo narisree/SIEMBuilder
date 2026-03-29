@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import json
 from utils.kb_loader import KBLoader
 from utils.claude_client import ClaudeClient
@@ -47,6 +48,14 @@ LOG_SOURCE_DISPLAY_NAMES = {
 def get_display_name(slug):
     return LOG_SOURCE_DISPLAY_NAMES.get(slug, slug.replace("_", " ").title())
 
+def navigate_to(slug, tab_idx=None):
+    """Navigate to Log Source Onboarding for the given slug, optionally jumping to a tab."""
+    st.session_state["nav_mode"] = "📘 Log Source Onboarding"
+    st.session_state["source_select"] = get_display_name(slug)
+    if tab_idx is not None:
+        st.session_state["_jump_tab"] = tab_idx
+    st.rerun()
+
 # ============================================
 # Sidebar
 # ============================================
@@ -87,7 +96,8 @@ nav_mode = st.sidebar.radio(
     "Select View",
     ["📊 Dashboard", "📘 Log Source Onboarding", "🛡️ Incident Response Playbooks"],
     index=0,
-    label_visibility="collapsed"
+    label_visibility="collapsed",
+    key="nav_mode"
 )
 
 st.sidebar.markdown("---")
@@ -228,21 +238,35 @@ if nav_mode == "📊 Dashboard":
             pc1, pc2 = st.columns(2)
             
             with pc1:
-                st.markdown(f"**Vendor:** {row['vendor']}")
+                st.markdown("**Vendor:**")
+                if st.button(row['vendor'], key=f"vendor_{row['slug']}", help=f"Open {row['display_name']} onboarding guide"):
+                    navigate_to(row['slug'])
                 st.markdown(f"**Category:** {row['category']}")
                 st.markdown(f"**Collection Method:** {row['collection_method']}")
-            
+
             with pc2:
                 st.markdown(f"**Splunk Add-on:** `{row['splunk_addon']}`")
                 st.markdown(f"**Primary Index:** `{row['primary_index']}`")
                 st.markdown(f"**Primary Sourcetype:** `{row['primary_sourcetype']}`")
-            
+
             # Coverage stats
             st.markdown("---")
             cs1, cs2, cs3 = st.columns(3)
-            cs1.metric("Internal Use Cases", row["internal_uc"])
-            cs2.metric("Splunk Public Use Cases", row["splunk_uc"])
-            cs3.metric("Cached Response Plans", row["cached_plans"])
+            with cs1:
+                st.metric("Internal Use Cases", row["internal_uc"])
+                if row["internal_uc"] > 0:
+                    if st.button("View →", key=f"int_uc_{row['slug']}", help="Go to Use Cases tab"):
+                        navigate_to(row['slug'], tab_idx=3)
+            with cs2:
+                st.metric("Splunk Public Use Cases", row["splunk_uc"])
+                if row["splunk_uc"] > 0:
+                    if st.button("View →", key=f"spl_uc_{row['slug']}", help="Go to Use Cases tab"):
+                        navigate_to(row['slug'], tab_idx=3)
+            with cs3:
+                st.metric("Cached Response Plans", row["cached_plans"])
+                if row["cached_plans"] > 0:
+                    if st.button("View →", key=f"rp_{row['slug']}", help="Go to Response Plans tab"):
+                        navigate_to(row['slug'], tab_idx=4)
     
     st.markdown("---")
     
@@ -316,7 +340,8 @@ else:
     selected_display = st.sidebar.selectbox(
         "Select Log Source",
         options=list(source_options.keys()),
-        index=0
+        index=0,
+        key="source_select"
     )
     selected_source = source_options[selected_display]
 
@@ -341,12 +366,27 @@ else:
             pc4.markdown(f"**Add-on:** `{source_meta.get('splunk_addon', '—')}`")
 
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
-        "📖 Integration Guide", 
-        "🔗 References", 
-        "💬 Chat", 
+        "📖 Integration Guide",
+        "🔗 References",
+        "💬 Chat",
         "📋 Use Cases",
         "📄 Response Plans"
     ])
+
+    if "_jump_tab" in st.session_state:
+        jump_idx = st.session_state.pop("_jump_tab")
+        components.html(f"""<script>
+            const observer = new MutationObserver(() => {{
+                const tabs = window.parent.document.querySelectorAll('button[data-baseweb="tab"]');
+                if (tabs.length > {jump_idx}) {{
+                    tabs[{jump_idx}].click();
+                    observer.disconnect();
+                }}
+            }});
+            observer.observe(window.parent.document.body, {{ childList: true, subtree: true }});
+            const tabs = window.parent.document.querySelectorAll('button[data-baseweb="tab"]');
+            if (tabs.length > {jump_idx}) tabs[{jump_idx}].click();
+        </script>""", height=0)
 
     # --- Tab 1: Integration Guide (unchanged) ---
     with tab1:
