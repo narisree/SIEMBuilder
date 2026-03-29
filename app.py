@@ -360,7 +360,7 @@ else:
     st.sidebar.markdown("- [Overview](#overview)")
     st.sidebar.markdown("- [Pre-requisites](#pre-requisites)")
     st.sidebar.markdown("- [Configuration](#log-collection-standard)")
-    st.sidebar.markdown("- [Validation](#validation-troubleshooting)")
+    st.sidebar.markdown("- [Validation](#validation--troubleshooting)")
 
     # --- Source Profile Card (new - borrowed from Sentinel Ninja pattern) ---
     source_meta = kb_loader.get_source_metadata(selected_source)
