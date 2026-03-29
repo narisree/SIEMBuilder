@@ -50,10 +50,7 @@ def get_display_name(slug):
 
 def navigate_to(slug, tab_idx=None):
     """Navigate to Log Source Onboarding for the given slug, optionally jumping to a tab."""
-    st.session_state["nav_mode"] = "📘 Log Source Onboarding"
-    st.session_state["source_select"] = get_display_name(slug)
-    if tab_idx is not None:
-        st.session_state["_jump_tab"] = tab_idx
+    st.session_state["_pending_nav"] = {"slug": slug, "tab_idx": tab_idx}
     st.rerun()
 
 # ============================================
@@ -91,13 +88,16 @@ else:
 st.sidebar.markdown("---")
 
 # --- Navigation Mode ---
+# Consume any pending navigation request before widgets render
+_pending_nav = st.session_state.pop("_pending_nav", None)
+_nav_index = 1 if _pending_nav else 0
+
 st.sidebar.header("📍 Navigation")
 nav_mode = st.sidebar.radio(
     "Select View",
     ["📊 Dashboard", "📘 Log Source Onboarding", "🛡️ Incident Response Playbooks"],
-    index=0,
-    label_visibility="collapsed",
-    key="nav_mode"
+    index=_nav_index,
+    label_visibility="collapsed"
 )
 
 st.sidebar.markdown("---")
@@ -337,11 +337,21 @@ else:
         st.stop()
 
     source_options = {get_display_name(slug): slug for slug in available_sources}
+    source_keys = list(source_options.keys())
+
+    # If arriving from dashboard navigation, pre-select the target source
+    _source_idx = 0
+    if _pending_nav and _pending_nav.get("slug"):
+        target_display = get_display_name(_pending_nav["slug"])
+        if target_display in source_keys:
+            _source_idx = source_keys.index(target_display)
+        if _pending_nav.get("tab_idx") is not None:
+            st.session_state["_jump_tab"] = _pending_nav["tab_idx"]
+
     selected_display = st.sidebar.selectbox(
         "Select Log Source",
-        options=list(source_options.keys()),
-        index=0,
-        key="source_select"
+        options=source_keys,
+        index=_source_idx
     )
     selected_source = source_options[selected_display]
 
