@@ -8,6 +8,7 @@ from utils.splunk_public_usecase_loader import SplunkPublicUseCaseLoader
 from utils.irp_loader import IRPLoader
 from utils.response_plan_generator import ResponsePlanGenerator
 from utils.mermaid_renderer import render_markdown_with_mermaid
+from utils.agent_chat_tab import render_agent_chat_tab
 
 st.set_page_config(
     page_title="SIEM Log Source Onboarding Assistant",
@@ -378,7 +379,7 @@ else:
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
         "📖 Integration Guide",
         "🔗 References",
-        "💬 Chat",
+        "🤖 Agent",
         "📋 Use Cases",
         "📄 Response Plans"
     ])
@@ -449,57 +450,17 @@ else:
             3. Restart the application
             """)
 
-    # --- Tab 3: Chat (unchanged) ---
+    # --- Tab 3: AI Agent (upgraded from basic chat) ---
     with tab3:
-        st.header("Chat with AI Assistant")
-        
-        if has_api_key or has_groq_key:
-            if "messages" not in st.session_state:
-                st.session_state.messages = []
-            
-            for message in st.session_state.messages:
-                with st.chat_message(message["role"]):
-                    st.markdown(message["content"])
-            
-            if prompt := st.chat_input("Ask a question about this log source..."):
-                st.session_state.messages.append({"role": "user", "content": prompt})
-                with st.chat_message("user"):
-                    st.markdown(prompt)
-                
-                kb_content = kb_loader.load_kb_content(selected_source)
-                
-                with st.chat_message("assistant"):
-                    with st.spinner("Thinking..."):
-                        try:
-                            if has_api_key:
-                                from utils.ai_client import ClaudeClient as AIClaude
-                                ai_chat = AIClaude(api_key)
-                            else:
-                                from utils.ai_client import GroqClient
-                                ai_chat = GroqClient(groq_key)
-                            
-                            response_data = ai_chat.get_response(
-                                question=prompt,
-                                kb_content=kb_content or "",
-                                source_name=get_display_name(selected_source),
-                                chat_history=st.session_state.messages[:-1]
-                            )
-                            
-                            if response_data["success"]:
-                                st.markdown(response_data["response"])
-                                st.session_state.messages.append({"role": "assistant", "content": response_data["response"]})
-                            else:
-                                st.error(f"Error: {response_data['message']}")
-                        except Exception as e:
-                            st.error(f"Error: {str(e)}")
-        else:
-            st.info("""
-            🔐 **AI API Required to Ask Questions**
-            
-            Add an API key to `.streamlit/secrets.toml` or Streamlit Cloud secrets to enable chat.
-            
-            **Free option:** Add `GROQ_API_KEY = "gsk_..."` (get one at console.groq.com)
-            """)
+        render_agent_chat_tab(
+            selected_source=selected_source,
+            source_display_name=get_display_name(selected_source),
+            kb_loader=kb_loader,
+            has_api_key=has_api_key,
+            api_key=api_key,
+            has_groq_key=has_groq_key,
+            groq_key=groq_key
+        )
 
     # --- Tab 4: Use Cases (UPDATED - Removed L1 Guidance and Validation Steps) ---
     with tab4:
@@ -683,4 +644,4 @@ else:
                                     st.error(f"Error: {str(e)}")
 
 st.sidebar.markdown("---")
-st.sidebar.caption("SIEM Log Source Onboarding Assistant v1.7")
+st.sidebar.caption("SIEM Log Source Onboarding Assistant v1.8")
