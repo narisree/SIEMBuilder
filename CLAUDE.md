@@ -1,34 +1,24 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working with the SIEMBuilder repository.
+Keep this file under 200 lines for reliable adherence.
 
-## Commands
+## Quick Start
 
-### Run the application
 ```bash
+# Run the application
 streamlit run app.py
-```
-Opens at http://localhost:8501
+# Opens at http://localhost:8501
 
-### Install dependencies
-```bash
+# Install dependencies
 pip install -r requirements.txt
-```
-
-### Configure AI provider (required)
-Create `.streamlit/secrets.toml` with one of:
-```toml
-GROQ_API_KEY = "gsk_..."          # Free, recommended
-ANTHROPIC_API_KEY = "sk-ant-..."  # Paid
-HUGGINGFACE_API_KEY = "hf_..."    # Free
-# Ollama: no key needed, runs locally
 ```
 
 ## Architecture
 
 ### Entry Point
 `app.py` is the sole Streamlit entry point with three views:
-- **Dashboard** – coverage metrics across all log sources
+- **Dashboard** – coverage metrics across all 21 log sources
 - **Log Source Onboarding** – 5-tab view: Integration Guide, References, Chat, Use Cases, Response Plans
 - **Incident Response Playbooks** – 5 IRPs with Mermaid flowcharts
 
@@ -56,16 +46,40 @@ HUGGINGFACE_API_KEY = "hf_..."    # Free
 - `Splunk_Library_batch_final.xlsx` – Splunk public use cases
 - `sources_catalog.json` – Metadata for all 21 log sources
 - `references.json` – Curated docs/video links per source
-- `Playbooks/IRP-*.md` – 5 incident response playbooks
 
-### Adding a New Log Source
+### AI Provider Priority
+`AIClientFactory` checks secrets in order: Groq → HuggingFace → Claude → Ollama (local).
+
+### Caching
+Generated response plans are written to `response_plans/<source>_<use_case_hash>.md` and loaded on subsequent visits.
+
+## Adding a New Log Source
 1. Add entry to `kb/sources_catalog.json`
 2. Create `kb/<source-slug>.md` integration guide
 3. Add references to `kb/references.json`
 4. Add display name mapping in `app.py` (`SOURCE_DISPLAY_NAMES`)
 
-### AI Provider Priority
-`AIClientFactory` checks secrets in this order: Groq → HuggingFace → Claude → Ollama (local).
+## AI Provider Config
+Create `.streamlit/secrets.toml`:
+```toml
+GROQ_API_KEY = "gsk_..."          # Free, recommended
+ANTHROPIC_API_KEY = "sk-ant-..."  # Paid
+HUGGINGFACE_API_KEY = "hf_..."    # Free
+# Ollama: no key needed, runs locally
+```
 
-### Caching
-Generated response plans are written to `response_plans/<source>_<use_case_hash>.md` and loaded on subsequent visits to avoid redundant API calls.
+## Coding Rules
+
+- **Always start complex tasks in plan mode** — think before coding
+- **Commit often** — one logical change per commit, descriptive message
+- **Keep `app.py` clean** — delegate logic to `utils/` modules, never put business logic directly in app.py
+- **Never break existing AI provider fallback chain** — always test all providers still work
+- **Streamlit state** — use `st.session_state` for all persistent UI state
+- **Run `streamlit run app.py`** to verify changes before declaring done
+- **Use subagents** for parallel tasks — say "use subagents" to parallelize research/implementation
+
+## Debugging Tips
+- Use `/doctor` for Claude Code diagnostics
+- Take screenshots and share when stuck on UI issues
+- Run Streamlit as a background task for log visibility
+- Use `/compact` at ~50% context usage to avoid degraded performance
