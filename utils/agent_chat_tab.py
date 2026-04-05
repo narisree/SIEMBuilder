@@ -1,60 +1,10 @@
 """
-Agent Chat Tab Renderer
-Drop-in replacement for the '# --- Tab 3: Chat (unchanged) ---' section in app.py.
-
-This replaces the freeform chatbot with a Tier 2 Hybrid Agent that:
-1. Extracts onboarding steps from the KB markdown
-2. Shows a progress sidebar with clickable steps
-3. Sends only the current step's KB content to the AI (saves tokens)
-4. Tracks environment details gathered from conversation
-5. Falls back to freeform chat if KB has no extractable steps
-
-INTEGRATION:
-  1. Add `from utils.onboarding_agent import ...` to app.py imports
-  2. Replace the `with tab3:` block with `render_agent_chat_tab(...)`
-  3. No other files change.
-
-See INSTALL_GUIDE below for exact copy-paste instructions.
+Agent Chat Tab Renderer (v2 — Side-Panel Layout)
+Clean chat bubble interface with contextual side panel.
+No step checklist inside the chat — just a progress bar + quick reference + log types.
 """
 
-# ============================================
-# INSTALL GUIDE — Read this, then apply
-# ============================================
-#
-# STEP 1: Add this import near the top of app.py (with the other utils imports):
-#
-#   from utils.onboarding_agent import (
-#       extract_kb_sections,
-#       get_top_level_steps,
-#       build_agent_system_prompt,
-#       OnboardingAgentState
-#   )
-#
-# STEP 2: Find this block in app.py:
-#
-#   # --- Tab 3: Chat (unchanged) ---
-#   with tab3:
-#       st.header("Chat with AI Assistant")
-#       ...everything until the next tab block...
-#
-# STEP 3: Replace that ENTIRE block with:
-#
-#   # --- Tab 3: AI Agent (upgraded from basic chat) ---
-#   with tab3:
-#       render_agent_chat_tab(
-#           selected_source=selected_source,
-#           source_display_name=get_display_name(selected_source),
-#           kb_loader=kb_loader,
-#           has_api_key=has_api_key,
-#           api_key=api_key,
-#           has_groq_key=has_groq_key,
-#           groq_key=groq_key
-#       )
-#
-# That's it. All other tabs, modules, and logic remain untouched.
-# ============================================
-
-
+import re
 import streamlit as st
 from typing import Optional
 from utils.onboarding_agent import (
@@ -64,6 +14,159 @@ from utils.onboarding_agent import (
     OnboardingAgentState
 )
 
+
+# ============================================
+# Log type mapping per source (for side panel)
+# ============================================
+
+SOURCE_LOG_TYPES = {
+    "palo_alto": ["Traffic", "Threat", "URL Filtering", "Authentication", "GlobalProtect", "Config"],
+    "windows_events": ["Security", "Application", "System"],
+    "sysmon_windows": ["Process Create", "Network Connect", "File Create", "Registry", "DNS Query"],
+    "powershell_scriptblock": ["Script Block", "Module Logging", "Transcription"],
+    "aws_cloudtrail": ["Management Events", "Data Events", "Insights"],
+    "sysmon_linux": ["Process Create", "Network Connect", "File Create"],
+    "okta": ["Authentication", "Admin", "System", "User Lifecycle"],
+    "cisco_ftd": ["Connection", "Intrusion", "File/Malware", "Security Intelligence"],
+    "suricata": ["Alert", "HTTP", "DNS", "TLS", "Flow"],
+    "kubernetes": ["API Audit", "Container", "Node", "Pod"],
+    "vmware_esxi": ["Hostd", "Vpxa", "Vobd", "Shell"],
+    "github": ["Audit", "Git", "Webhook"],
+    "nginx": ["Access", "Error"],
+    "linux": ["auth.log", "syslog", "audit.log", "kern.log"],
+    "azure_ad": ["Sign-in", "Audit", "Provisioning", "Risk Events"],
+    "cisco_asa": ["Firewall", "VPN", "NAT", "ACL"],
+    "checkpoint": ["Firewall", "VPN", "IPS", "URL Filtering"],
+    "crowdstrike_edr": ["Detection", "Incident", "Audit"],
+    "o365": ["Exchange", "SharePoint", "Azure AD", "DLP"],
+    "proofpoint": ["Message", "Click", "URL Defense"],
+    "zscaler_proxy": ["Web", "Firewall", "DNS"],
+}
+
+
+def _get_port_info(source_slug: str) -> str:
+    """Derive port info from source slug."""
+    port_map = {
+        "palo_alto": "UDP 514/515",
+        "windows_events": "TCP 9997",
+        "sysmon_windows": "TCP 9997",
+        "powershell_scriptblock": "TCP 9997",
+        "linux": "TCP 9997 / UDP 514",
+        "cisco_asa": "UDP 514",
+        "checkpoint": "TCP 18184 / UDP 514",
+        "cisco_ftd": "UDP 514",
+        "suricata": "TCP 9997",
+        "vmware_esxi": "UDP 514",
+        "nginx": "TCP 9997",
+        "azure_ad": "HTTPS 443",
+        "crowdstrike_edr": "HTTPS 443",
+        "o365": "HTTPS 443",
+        "okta": "HTTPS 443",
+        "aws_cloudtrail": "HTTPS 443",
+        "proofpoint": "UDP 514 / HTTPS 443",
+        "zscaler_proxy": "TCP 9997",
+        "github": "HTTPS 443",
+        "kubernetes": "HTTPS 443 / TCP 9997",
+        "sysmon_linux": "TCP 9997",
+    }
+    return port_map.get(source_slug, "—")
+
+
+def _md_to_safe_html(text: str) -> str:
+    """
+    Convert markdown text to safe HTML for chat bubbles.
+    Handles: bold, italic, code blocks, inline code, line breaks, lists.
+    """
+    # Escape HTML entities first
+    text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+    # Code blocks (``` ... ```)
+    def _code_block(match):
+        code = match.group(1).strip()
+        return (
+            f'<pre style="background:#1e293b;color:#e2e8f0;padding:12px 16px;'
+            f'border-radius:8px;font-size:12px;overflow-x:auto;'
+            f"font-family:'SF Mono','Consolas',monospace;margin:8px 0;\">"
+            f'<code>{code}</code></pre>'
+        )
+    text = re.sub(r'```(?:\w*)\n?(.*?)```', _code_block, text, flags=re.DOTALL)
+
+    # Inline code (`...`)
+    text = re.sub(
+        r'`([^`]+)`',
+        r"<code style=\"background:#e5e7eb;padding:2px 6px;border-radius:4px;"
+        r"font-size:12px;font-family:'SF Mono','Consolas',monospace;\">\1</code>",
+        text
+    )
+
+    # Bold (**...**)
+    text = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', text)
+
+    # Italic (*...*)
+    text = re.sub(r'(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)', r'<em>\1</em>', text)
+
+    # Bullet lists
+    lines = text.split('\n')
+    result_lines = []
+    in_ul = False
+    in_ol = False
+    for line in lines:
+        stripped = line.strip()
+        is_bullet = bool(re.match(r'^[-*•]\s+', stripped))
+        is_numbered = bool(re.match(r'^\d+\.\s+', stripped))
+
+        if is_bullet:
+            if not in_ul:
+                if in_ol:
+                    result_lines.append('</ol>')
+                    in_ol = False
+                result_lines.append('<ul style="margin:6px 0;padding-left:20px;">')
+                in_ul = True
+            item = re.sub(r'^[-*•]\s+', '', stripped)
+            result_lines.append(f'<li style="margin:3px 0;font-size:14px;">{item}</li>')
+        elif is_numbered:
+            if not in_ol:
+                if in_ul:
+                    result_lines.append('</ul>')
+                    in_ul = False
+                result_lines.append('<ol style="margin:6px 0;padding-left:20px;">')
+                in_ol = True
+            item = re.sub(r'^\d+\.\s+', '', stripped)
+            result_lines.append(f'<li style="margin:3px 0;font-size:14px;">{item}</li>')
+        else:
+            if in_ul:
+                result_lines.append('</ul>')
+                in_ul = False
+            if in_ol:
+                result_lines.append('</ol>')
+                in_ol = False
+            result_lines.append(line)
+
+    if in_ul:
+        result_lines.append('</ul>')
+    if in_ol:
+        result_lines.append('</ol>')
+    text = '\n'.join(result_lines)
+
+    # Paragraphs (double newlines)
+    text = re.sub(
+        r'\n\n+',
+        '</p><p style="margin:8px 0;font-size:14px;line-height:1.7;">',
+        text
+    )
+
+    # Single newlines → <br>
+    text = text.replace('\n', '<br>')
+
+    # Wrap in paragraph
+    text = f'<p style="margin:8px 0;font-size:14px;line-height:1.7;">{text}</p>'
+
+    return text
+
+
+# ============================================
+# Main renderer
+# ============================================
 
 def render_agent_chat_tab(
     selected_source: str,
@@ -75,16 +178,8 @@ def render_agent_chat_tab(
     groq_key: Optional[str]
 ):
     """
-    Render the Agent Chat tab. Drop-in replacement for the old chat tab.
-    
-    Args:
-        selected_source: Source slug (e.g., 'palo_alto')
-        source_display_name: Human-readable name (e.g., 'Palo Alto Firewall')
-        kb_loader: KBLoader instance
-        has_api_key: Whether Anthropic key is available
-        api_key: Anthropic API key or None
-        has_groq_key: Whether Groq key is available
-        groq_key: Groq API key or None
+    Render the Agent Chat tab with side-panel layout.
+    Chat bubbles on the left, context panel on the right.
     """
 
     # ── Load KB and extract steps ──
@@ -102,120 +197,259 @@ def render_agent_chat_tab(
     completed = OnboardingAgentState.get_completed(st.session_state)
     messages = OnboardingAgentState.get_messages(st.session_state)
 
-    # ── Header ──
-    if agent_mode == 'guided':
-        st.header("🤖 Onboarding Agent")
-        st.caption(
-            f"Guided onboarding for **{source_display_name}** — "
-            f"Step {current_step_idx + 1} of {len(current_steps)} · "
-            f"{len(completed)}/{len(current_steps)} complete"
-        )
-    else:
-        st.header("💬 AI Assistant")
-        st.caption(f"Ask questions about **{source_display_name}** integration")
+    # ── Source metadata ──
+    source_meta = kb_loader.get_source_metadata(selected_source) or {}
+    log_types = SOURCE_LOG_TYPES.get(selected_source, [])
 
-    # ── Progress & Step Navigation (guided mode only) ──
-    if agent_mode == 'guided' and current_steps:
-        # Progress bar
-        progress = len(completed) / len(current_steps) if current_steps else 0
-        st.progress(progress, text=f"{len(completed)}/{len(current_steps)} steps complete")
+    # ============================================
+    # CUSTOM CSS
+    # ============================================
+    st.markdown("""
+    <style>
+    .agent-bubble {
+        background-color: #f0f2f6;
+        border-radius: 16px 16px 16px 4px;
+        padding: 16px 20px;
+        margin-bottom: 12px;
+        max-width: 100%;
+        border: 1px solid #e0e3e8;
+    }
+    .agent-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #3b82f6;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 6px;
+    }
+    .user-bubble {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white !important;
+        border-radius: 16px 16px 4px 16px;
+        padding: 14px 20px;
+        margin-bottom: 12px;
+        margin-left: 15%;
+        max-width: 85%;
+        text-align: left;
+    }
+    .user-bubble p, .user-bubble li, .user-bubble code,
+    .user-bubble strong, .user-bubble em {
+        color: white !important;
+    }
+    .panel-card {
+        background-color: #f8f9fb;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 16px 18px;
+        margin-bottom: 14px;
+    }
+    .panel-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 12px;
+    }
+    .ref-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 0;
+        border-bottom: 1px solid #f0f1f3;
+    }
+    .ref-row:last-child { border-bottom: none; }
+    .ref-label { font-size: 13px; color: #6b7280; }
+    .ref-value {
+        font-size: 13px;
+        font-family: 'SF Mono', 'Consolas', monospace;
+        color: #3b82f6;
+        font-weight: 600;
+    }
+    .log-tag {
+        display: inline-block;
+        background-color: #ecfdf5;
+        color: #059669;
+        font-size: 12px;
+        font-weight: 500;
+        padding: 3px 10px;
+        border-radius: 6px;
+        border: 1px solid #a7f3d0;
+        margin: 3px 4px 3px 0;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-        # Step navigator
-        with st.expander("📋 Onboarding Steps", expanded=True):
-            for i, step in enumerate(current_steps):
-                col1, col2, col3 = st.columns([0.5, 8, 1.5])
-                
-                with col1:
-                    is_done = i in completed
-                    if st.checkbox(
-                        "done",
-                        value=is_done,
-                        key=f"agent_step_check_{i}",
-                        label_visibility="collapsed"
-                    ):
-                        if i not in completed:
-                            OnboardingAgentState.mark_step_complete(st.session_state, i)
-                            st.rerun()
-                    else:
-                        if i in completed:
-                            OnboardingAgentState.unmark_step_complete(st.session_state, i)
-                            st.rerun()
+    # ============================================
+    # TWO-COLUMN LAYOUT
+    # ============================================
+    chat_col, panel_col = st.columns([7, 3])
 
-                with col2:
-                    is_current = (i == current_step_idx)
-                    prefix = "👉 " if is_current else ""
-                    style = "**" if is_current else ""
-                    done_strike = "~~" if i in completed else ""
-                    st.markdown(
-                        f"{prefix}{style}{done_strike}Step {i + 1}: {step['title']}{done_strike}{style}"
-                    )
+    # ============================================
+    # RIGHT PANEL
+    # ============================================
+    with panel_col:
 
-                with col3:
-                    if i != current_step_idx:
-                        if st.button("Go", key=f"agent_goto_{i}", help=f"Jump to Step {i + 1}"):
-                            OnboardingAgentState.set_current_step(st.session_state, i)
-                            st.rerun()
-                    else:
-                        st.markdown("*active*")
-
-        st.markdown("---")
-
-    # ── API key check ──
-    if not has_api_key and not has_groq_key:
-        st.info("""
-        🔐 **AI API Required**
-        
-        Add an API key to `.streamlit/secrets.toml` or Streamlit Cloud secrets to enable the agent.
-        
-        **Free option:** `GROQ_API_KEY = "gsk_..."`  
-        **Paid option:** `ANTHROPIC_API_KEY = "sk-ant-..."`
-        """)
-        
-        # Still show the step content even without AI
+        # ── Onboarding Progress ──
         if agent_mode == 'guided' and current_steps:
-            st.subheader(f"📖 Step {current_step_idx + 1}: {current_steps[current_step_idx]['title']}")
-            st.markdown(current_steps[current_step_idx]['content'])
-        return
+            progress_pct = len(completed) / len(current_steps)
+            st.markdown(f"""
+            <div class="panel-card">
+                <div class="panel-title">Onboarding Progress</div>
+                <div style="background:#e5e7eb;border-radius:6px;height:8px;overflow:hidden;margin-bottom:6px;">
+                    <div style="width:{progress_pct*100:.0f}%;height:100%;background:linear-gradient(90deg,#10b981,#06b6d4);border-radius:6px;transition:width 0.5s;"></div>
+                </div>
+                <div style="text-align:right;font-size:12px;color:#6b7280;">{len(completed)}/{len(current_steps)} steps complete</div>
+            </div>
+            """, unsafe_allow_html=True)
 
-    # ── Chat messages ──
-    for msg in messages:
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
+        # ── Quick Reference ──
+        index_val = source_meta.get('primary_index', '—')
+        sourcetype_val = source_meta.get('primary_sourcetype', '—')
+        addon_val = source_meta.get('splunk_addon', '—')
+        port_val = _get_port_info(selected_source)
+        method_val = source_meta.get('collection_method', '—')
 
-    # ── Auto-greeting on first visit (guided mode) ──
-    if agent_mode == 'guided' and not messages and current_steps:
-        greeting = (
-            f"👋 I'm your onboarding agent for **{source_display_name}**. "
-            f"I've identified **{len(current_steps)} steps** from the integration guide.\n\n"
-            f"We're starting with **Step 1: {current_steps[0]['title']}**.\n\n"
-            f"Before we begin — can you tell me about your environment? "
-            f"For example: Splunk version, deployment type (on-prem/cloud), "
-            f"and any specific constraints?"
-        )
-        OnboardingAgentState.add_message(st.session_state, "assistant", greeting)
-        st.rerun()
+        st.markdown(f"""
+        <div class="panel-card">
+            <div class="panel-title">Quick Reference</div>
+            <div class="ref-row"><span class="ref-label">Index</span><span class="ref-value">{index_val}</span></div>
+            <div class="ref-row"><span class="ref-label">Sourcetype</span><span class="ref-value">{sourcetype_val}</span></div>
+            <div class="ref-row"><span class="ref-label">Add-on</span><span class="ref-value">{addon_val}</span></div>
+            <div class="ref-row"><span class="ref-label">Port</span><span class="ref-value">{port_val}</span></div>
+            <div class="ref-row"><span class="ref-label">Method</span><span class="ref-value">{method_val}</span></div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    # ── Chat input ──
-    if prompt := st.chat_input("Ask a question or describe your environment..."):
-        # Add user message
-        OnboardingAgentState.add_message(st.session_state, "user", prompt)
-        with st.chat_message("user"):
-            st.markdown(prompt)
+        # ── Log Types ──
+        if log_types:
+            tags_html = ''.join([f'<span class="log-tag">{lt}</span>' for lt in log_types])
+            st.markdown(f"""
+            <div class="panel-card">
+                <div class="panel-title">Log Types</div>
+                <div>{tags_html}</div>
+            </div>
+            """, unsafe_allow_html=True)
 
-        # Build context-aware system prompt
+        # ── Compact step navigation ──
         if agent_mode == 'guided' and current_steps:
-            system_prompt_content = build_agent_system_prompt(
-                source_name=source_display_name,
-                steps=current_steps,
-                current_step_index=current_step_idx,
-                completed_indices=completed,
-                environment_context=OnboardingAgentState.format_environment_context(st.session_state)
-            )
-        else:
-            system_prompt_content = kb_content
+            st.markdown("---")
+            st.caption(f"📍 **Step {current_step_idx + 1}/{len(current_steps)}:** {current_steps[current_step_idx]['title']}")
 
-        # Get AI response
-        with st.chat_message("assistant"):
+            nav1, nav2 = st.columns(2)
+            with nav1:
+                if current_step_idx > 0:
+                    if st.button("⬅️ Prev", key="agent_prev", use_container_width=True):
+                        OnboardingAgentState.set_current_step(st.session_state, current_step_idx - 1)
+                        prev_title = current_steps[current_step_idx - 1]['title']
+                        OnboardingAgentState.add_message(
+                            st.session_state, "assistant",
+                            f"↩️ Going back to **Step {current_step_idx}: {prev_title}**. What do you need help with?"
+                        )
+                        st.rerun()
+            with nav2:
+                if current_step_idx < len(current_steps) - 1:
+                    if st.button("Next ➡️", key="agent_next", use_container_width=True):
+                        next_idx = current_step_idx + 1
+                        OnboardingAgentState.set_current_step(st.session_state, next_idx)
+                        next_title = current_steps[next_idx]['title']
+                        OnboardingAgentState.add_message(
+                            st.session_state, "assistant",
+                            f"➡️ Moving to **Step {next_idx + 1}: {next_title}**. Let me know how I can help."
+                        )
+                        st.rerun()
+
+            if current_step_idx not in completed:
+                if st.button("✅ Mark Complete", key="agent_mark_done", use_container_width=True, type="primary"):
+                    OnboardingAgentState.mark_step_complete(st.session_state, current_step_idx)
+                    next_idx = OnboardingAgentState.advance_to_next_step(st.session_state)
+                    if next_idx != current_step_idx and next_idx < len(current_steps):
+                        next_title = current_steps[next_idx]['title']
+                        OnboardingAgentState.add_message(
+                            st.session_state, "assistant",
+                            f"✅ **Step {current_step_idx + 1}** complete! Moving to **Step {next_idx + 1}: {next_title}**."
+                        )
+                    else:
+                        OnboardingAgentState.add_message(
+                            st.session_state, "assistant",
+                            f"✅ **Step {current_step_idx + 1}** complete! 🎉 All steps done! "
+                            f"{source_display_name} onboarding is complete. You can still ask questions."
+                        )
+                    st.rerun()
+            else:
+                st.success("✓ Step complete")
+
+    # ============================================
+    # LEFT COLUMN — Chat Bubbles
+    # ============================================
+    with chat_col:
+
+        # ── API key check ──
+        if not has_api_key and not has_groq_key:
+            st.info("""
+            🔐 **AI API Required**
+            
+            Add an API key to `.streamlit/secrets.toml` or Streamlit Cloud secrets.
+            
+            **Free:** `GROQ_API_KEY = "gsk_..."`  |  **Paid:** `ANTHROPIC_API_KEY = "sk-ant-..."`
+            """)
+            if agent_mode == 'guided' and current_steps:
+                st.markdown(f"### 📖 Step {current_step_idx + 1}: {current_steps[current_step_idx]['title']}")
+                st.markdown(current_steps[current_step_idx]['content'])
+            return
+
+        # ── Auto-greeting on first visit ──
+        if not messages:
+            if agent_mode == 'guided' and current_steps:
+                greeting = (
+                    f"👋 I'm your onboarding agent for **{source_display_name}**. "
+                    f"I've identified **{len(current_steps)} steps** from the integration guide.\n\n"
+                    f"We're starting with **Step 1: {current_steps[0]['title']}**.\n\n"
+                    f"Before we begin — can you tell me about your environment? "
+                    f"For example: Splunk version, deployment type (on-prem/cloud), "
+                    f"and any specific constraints?"
+                )
+            else:
+                greeting = (
+                    f"👋 I'm your AI assistant for **{source_display_name}**. "
+                    f"Ask me anything about integrating this log source into Splunk."
+                )
+            OnboardingAgentState.add_message(st.session_state, "assistant", greeting)
+            st.rerun()
+
+        # ── Render chat bubbles ──
+        for msg in messages:
+            if msg["role"] == "user":
+                st.markdown(
+                    f'<div class="user-bubble">{_md_to_safe_html(msg["content"])}</div>',
+                    unsafe_allow_html=True
+                )
+            else:
+                st.markdown(
+                    f'<div class="agent-bubble">'
+                    f'<div class="agent-label">SIEM Agent</div>'
+                    f'{_md_to_safe_html(msg["content"])}'
+                    f'</div>',
+                    unsafe_allow_html=True
+                )
+
+        # ── Chat input ──
+        if prompt := st.chat_input("Ask a question or describe your environment..."):
+            OnboardingAgentState.add_message(st.session_state, "user", prompt)
+
+            # Build context-aware system prompt
+            if agent_mode == 'guided' and current_steps:
+                system_prompt_content = build_agent_system_prompt(
+                    source_name=source_display_name,
+                    steps=current_steps,
+                    current_step_index=current_step_idx,
+                    completed_indices=completed,
+                    environment_context=OnboardingAgentState.format_environment_context(st.session_state)
+                )
+            else:
+                system_prompt_content = kb_content
+
+            # Get AI response
             with st.spinner("Agent is thinking..."):
                 try:
                     if has_api_key:
@@ -225,9 +459,6 @@ def render_agent_chat_tab(
                         from utils.ai_client import GroqClient
                         ai_chat = GroqClient(groq_key)
 
-                    # Use the existing get_response interface
-                    # For guided mode, we pass the agent system prompt via kb_content
-                    # The ai_client._build_system_prompt will wrap it appropriately
                     response_data = ai_chat.get_response(
                         question=prompt,
                         kb_content=system_prompt_content,
@@ -236,69 +467,17 @@ def render_agent_chat_tab(
                     )
 
                     if response_data["success"]:
-                        response_text = response_data["response"]
-                        st.markdown(response_text)
                         OnboardingAgentState.add_message(
-                            st.session_state, "assistant", response_text
+                            st.session_state, "assistant", response_data["response"]
                         )
                     else:
-                        st.error(f"Error: {response_data['message']}")
-
+                        OnboardingAgentState.add_message(
+                            st.session_state, "assistant",
+                            f"⚠️ Error: {response_data['message']}"
+                        )
                 except Exception as e:
-                    st.error(f"Error: {str(e)}")
-
-    # ── Step navigation buttons (guided mode) ──
-    if agent_mode == 'guided' and current_steps:
-        st.markdown("---")
-        nav1, nav2, nav3 = st.columns([1, 1, 1])
-
-        with nav1:
-            if current_step_idx > 0:
-                if st.button("⬅️ Previous Step", use_container_width=True):
-                    OnboardingAgentState.set_current_step(
-                        st.session_state, current_step_idx - 1
-                    )
-                    # Add navigation message
-                    prev_title = current_steps[current_step_idx - 1]['title']
                     OnboardingAgentState.add_message(
-                        st.session_state, "assistant",
-                        f"↩️ Going back to **Step {current_step_idx}: {prev_title}**. What do you need help with here?"
+                        st.session_state, "assistant", f"⚠️ Error: {str(e)}"
                     )
-                    st.rerun()
 
-        with nav2:
-            if current_step_idx not in completed:
-                if st.button("✅ Mark Step Complete", use_container_width=True, type="primary"):
-                    OnboardingAgentState.mark_step_complete(
-                        st.session_state, current_step_idx
-                    )
-                    # Auto-advance
-                    next_idx = OnboardingAgentState.advance_to_next_step(st.session_state)
-                    if next_idx != current_step_idx and next_idx < len(current_steps):
-                        next_title = current_steps[next_idx]['title']
-                        OnboardingAgentState.add_message(
-                            st.session_state, "assistant",
-                            f"✅ **Step {current_step_idx + 1}: {current_steps[current_step_idx]['title']}** — complete!\n\n"
-                            f"Moving to **Step {next_idx + 1}: {next_title}**. "
-                            f"Here's what we need to do next."
-                        )
-                    else:
-                        OnboardingAgentState.add_message(
-                            st.session_state, "assistant",
-                            f"✅ **Step {current_step_idx + 1}: {current_steps[current_step_idx]['title']}** — complete!\n\n"
-                            f"🎉 **All steps are done!** The {source_display_name} integration is complete. "
-                            f"You can still ask questions or revisit any step."
-                        )
-                    st.rerun()
-
-        with nav3:
-            if current_step_idx < len(current_steps) - 1:
-                if st.button("Next Step ➡️", use_container_width=True):
-                    next_idx = current_step_idx + 1
-                    OnboardingAgentState.set_current_step(st.session_state, next_idx)
-                    next_title = current_steps[next_idx]['title']
-                    OnboardingAgentState.add_message(
-                        st.session_state, "assistant",
-                        f"➡️ Jumping to **Step {next_idx + 1}: {next_title}**. Let me know how I can help."
-                    )
-                    st.rerun()
+            st.rerun()
